@@ -314,6 +314,9 @@ def delete_product(pid):
 # ════════════════════════════════
 #  ORDERS API
 # ════════════════════════════════
+# ════════════════════════════════
+#  ORDERS API (UPDATED)
+# ════════════════════════════════
 @app.route('/api/orders', methods=['POST'])
 def place_order():
     data = request.json or {}
@@ -343,12 +346,6 @@ def place_order():
         'timestamp': datetime.now().isoformat(),
         'name': data.get('name'),
         'phone': data.get('phone'),
-        'address': data.get('address',''),
-        'note': data.get('note',''),
-        'items': items_raw,
-        'total': data.get('total',0),
-        'status': 'new',
-        'order_type': order_type,
         'has_image': bool(custom_img)
     }
     broadcast('order_placed', order_payload)
@@ -359,40 +356,24 @@ def place_order():
 def get_orders():
     with get_db() as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT * FROM orders ORDER BY timestamp DESC')
+            cur.execute('SELECT id, timestamp, name, phone, status, order_type, (img_data IS NOT NULL) as has_image FROM orders ORDER BY timestamp DESC')
             rows = cur.fetchall()
-    orders = []
-    for r in rows:
-        o = dict(r)
-        o['has_image'] = bool(o.get('img_data'))
-        try:
-            o['items'] = json.loads(o['items'])
-        except Exception:
-            o['items'] = []
-        # Exclude massive base64 payload from normal list array to optimize network pipelines
-        if 'img_data' in o:
-            del o['img_data']
-        orders.append(o)
-    return jsonify(orders)
+    return jsonify([dict(r) for r in rows])
 
-@app.route('/api/orders/<order_id>/image')
+@app.route('/api/orders/<order_id>/view')
 @owner_required
-def order_image(order_id):
+def get_order_detail(order_id):
     with get_db() as conn:
         with conn.cursor() as cur:
-            cur.execute('SELECT img_data FROM orders WHERE id=%s', (order_id,))
+            cur.execute('SELECT * FROM orders WHERE id=%s', (order_id,))
             row = cur.fetchone()
-    if not row or not row['img_data']:
-        return '', 404
-    try:
-        img_data = row['img_data']
-        header, encoded = img_data.split(',', 1)
-        mime = header.split(':')[1].split(';')[0]
-        img_bytes = base64.b64decode(encoded)
-        return Response(img_bytes, mimetype=mime,
-                        headers={'Cache-Control': 'public, max-age=86400'})
-    except Exception:
-        return '', 400
+    if not row: return jsonify({'error': 'Not found'}), 404
+    
+    order = dict(row)
+    try: order['items'] = json.loads(order['items'])
+    except: order['items'] = []
+    # We include the img_data here for the detail modal to display
+    return jsonify(order)
 
 @app.route('/api/orders/<order_id>/status', methods=['PATCH'])
 @owner_required

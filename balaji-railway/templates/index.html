@@ -278,6 +278,20 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
       </div>
     </div>
   </div>
+
+  <div class="section" style="background:#fff; border-bottom:1px solid #ede5d0;">
+    <div class="sec-head">
+      <div class="sec-tag">✦ Curated For You</div>
+      <h2 class="sec-title">Featured <span>Collections</span></h2>
+    </div>
+    <div class="products-grid" id="featuredGrid">
+      <div class="empty-state" style="grid-column:1/-1"><div class="big">⏳</div><p>Loading featured pieces...</p></div>
+    </div>
+    <div style="text-align:center; margin-top:2.5rem;">
+      <button class="btn-gold" onclick="showPage('shop')" style="padding:.8rem 2.5rem;">View Entire Store →</button>
+    </div>
+  </div>
+
   <div class="why-section">
     <div class="sec-head" style="margin-bottom:2rem">
       <div class="sec-tag" style="color:var(--gold-l)">✦ Why Choose Us</div>
@@ -461,7 +475,7 @@ function toggleMobileMenu() {
 
 function handleMobileNav(pageId) {
   showPage(pageId);
-  toggleMobileMenu(); // Close the menu panel automatically after click selection
+  toggleMobileMenu(); 
 }
 
 // ─── API HELPERS ───
@@ -507,6 +521,7 @@ async function loadProducts(filter='all') {
     }
   }
   renderProducts(filtered);
+  renderFeaturedProducts(products); 
 }
 
 function renderProducts(products) {
@@ -527,6 +542,32 @@ function renderProducts(products) {
         <div class="pc-foot">
           <div class="pc-price">₹${p.price}</div>
           <button class="pc-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Add to Cart">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFeaturedProducts(products) {
+  const grid = document.getElementById('featuredGrid');
+  if (!products || products.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="big">💎</div><p>New pieces dropping soon!</p></div>`;
+    return;
+  }
+  const featuredItems = products.slice(0, 4);
+  
+  grid.innerHTML = featuredItems.map(p => `
+    <div class="product-card" onclick="showPage('shop')">
+      <div class="pc-img" style="background:${p.metal==='gold'?'#FFF8E8':'#F0F0F8'}">
+        ${p.has_image ? `<img src="/api/products/${p.id}/image" alt="${p.name}">` : `<span class="pc-emoji">${p.emoji||'💎'}</span>`}
+        <span class="pc-badge ${p.metal}">${p.metal==='gold'?'Gold':'Silver'}</span>
+      </div>
+      <div class="pc-body">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-type">${p.type}</div>
+        <div class="pc-foot">
+          <div class="pc-price">₹${p.price}</div>
+          <button class="btn-gold" style="padding: .35rem .8rem; border-radius: 20px; font-size: .75rem;" onclick="event.stopPropagation(); showPage('shop')">View Item</button>
         </div>
       </div>
     </div>
@@ -554,7 +595,7 @@ function updateCartBadge() {
   document.getElementById('cartBadge').textContent = total;
 }
 
-// ─── CART ───
+// ─── CART SYSTEM FUNCTIONS ───
 function renderCart() {
   const wrap = document.getElementById('cartContent');
   if (cart.length === 0) {
@@ -562,7 +603,8 @@ function renderCart() {
     return;
   }
   const subtotal = cart.reduce((s,c) => s + parseInt(c.price.replace(/,/g,''))*c.qty, 0);
-  const itemsHtml = cart.map(c => `
+  
+  let itemsHtml = cart.map(c => `
     <div class="cart-item">
       <div class="ci-img">
         ${c.has_image ? `<img src="/api/products/${c.id}/image" alt="${c.name}">` : (c.emoji||'💎')}
@@ -579,33 +621,26 @@ function renderCart() {
       </div>
     </div>
   `).join('');
-  wrap.innerHTML = `
-    <div class="cart-items">${itemsHtml}</div>
+
+  wrap.innerHTML = itemsHtml + `
     <div class="cart-summary">
-      <h3>Order Summary</h3>
-      ${cart.map(c => `<div class="sum-row"><span>${c.name} ×${c.qty}</span><span>₹${(parseInt(c.price.replace(/,/g,''))*c.qty).toLocaleString('en-IN')}</span></div>`).join('')}
+      <h3>Summary</h3>
+      <div class="sum-row"><span>Subtotal</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>
       <div class="sum-row"><span>Total</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>
     </div>
-    <div class="checkout-form">
-      <h3>Your Details</h3>
-      <div class="form-row-2">
-        <div class="fg"><label>Your Name *</label><input type="text" id="co-name" placeholder="Full name"></div>
-        <div class="fg"><label>Phone Number *</label><input type="tel" id="co-phone" placeholder="10-digit mobile"></div>
-      </div>
-      <div class="fg"><label>Delivery Address (optional)</label><input type="text" id="co-addr" placeholder="Your address for delivery"></div>
-      <div class="fg"><label>Special Note</label><textarea id="co-note" placeholder="Any special requirements..."></textarea></div>
-      <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">✦ Confirm Order — We'll Call You Back</button>
-      <button class="wa-order-btn" onclick="waCartOrder()">💬 Order via WhatsApp Instead</button>
-    </div>`;
+  `;
 }
 
-function changeQty(pid, delta) {
-  const idx = cart.findIndex(c => c.id === pid);
-  if (idx === -1) return;
-  cart[idx].qty += delta;
-  if (cart[idx].qty <= 0) cart.splice(idx, 1);
-  updateCartBadge();
-  renderCart();
+function changeQty(pid, amt) {
+  const item = cart.find(c => c.id === pid);
+  if(!item) return;
+  item.qty += amt;
+  if(item.qty <= 0) {
+    removeFromCart(pid);
+  } else {
+    updateCartBadge();
+    renderCart();
+  }
 }
 
 function removeFromCart(pid) {
@@ -618,9 +653,10 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+// ─── UTILITIES & EXTERNAL APIS ───
 function openWhatsApp() {
   window.open(`https://wa.me/${OWNER_PHONE}`, '_blank');
 }

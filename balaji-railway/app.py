@@ -12,7 +12,7 @@ import os, json, uuid, base64, queue, threading
 from datetime import datetime
 from functools import wraps
 from flask import (Flask, render_template, request, jsonify,
-                   session, Response, redirect, url_for)
+                    session, Response, redirect, url_for)
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -127,7 +127,7 @@ def init_db():
                     total INTEGER,
                     status TEXT DEFAULT 'new',
                     order_type TEXT DEFAULT 'cart',
-                    img_data TEXT -- 👈 EQUIPPED TO STORE CUSTOM UPLOADS SAFELY
+                    img_data TEXT
                 );
             ''')
             cur.execute('SELECT COUNT(*) FROM products')
@@ -152,7 +152,7 @@ def init_db():
 
 try:
     init_db()
-    print("✅ Database initialised with Order img_data space.")
+    print("✅ Database initialised with Order structure and core parameters.")
 except Exception as e:
     print(f"⚠️  DB init error: {e}")
 
@@ -225,12 +225,15 @@ def product_image(pid):
             row = cur.fetchone()
     if not row or not row['img_data']:
         return '', 404
-    img_data = row['img_data']
-    header, encoded = img_data.split(',', 1)
-    mime = header.split(':')[1].split(';')[0]
-    img_bytes = base64.b64decode(encoded)
-    return Response(img_bytes, mimetype=mime,
-                    headers={'Cache-Control': 'public, max-age=86400'})
+    try:
+        img_data = row['img_data']
+        header, encoded = img_data.split(',', 1)
+        mime = header.split(':')[1].split(';')[0]
+        img_bytes = base64.b64decode(encoded)
+        return Response(img_bytes, mimetype=mime,
+                        headers={'Cache-Control': 'public, max-age=86400'})
+    except Exception:
+        return '', 400
 
 @app.route('/api/products', methods=['POST'])
 @owner_required
@@ -318,12 +321,9 @@ def place_order():
     order_id = ('CORD-' if order_type == 'custom' else 'ORD-') + str(int(datetime.now().timestamp() * 1000))
     
     items_raw = data.get('items', [])
-    
-    # Extract image whether it arrives as custom_image or img_data parameters
     custom_img = data.get('custom_image') or data.get('img_data')
 
     if order_type == 'custom' and custom_img:
-        # Keep copy inside items object fallback structure
         items_raw = {'custom_image': custom_img}
 
     items_json = json.dumps(items_raw) if isinstance(items_raw, (list, dict)) else str(items_raw)
@@ -349,7 +349,7 @@ def place_order():
         'total': data.get('total',0),
         'status': 'new',
         'order_type': order_type,
-        'img_data': custom_img
+        'has_image': bool(custom_img)
     }
     broadcast('order_placed', order_payload)
     return jsonify({'ok': True, 'id': order_id})
@@ -364,12 +364,35 @@ def get_orders():
     orders = []
     for r in rows:
         o = dict(r)
+        o['has_image'] = bool(o.get('img_data'))
         try:
             o['items'] = json.loads(o['items'])
         except Exception:
             o['items'] = []
+        # Exclude massive base64 payload from normal list array to optimize network pipelines
+        if 'img_data' in o:
+            del o['img_data']
         orders.append(o)
     return jsonify(orders)
+
+@app.route('/api/orders/<order_id>/image')
+@owner_required
+def order_image(order_id):
+    with get_db() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT img_data FROM orders WHERE id=%s', (order_id,))
+            row = cur.fetchone()
+    if not row or not row['img_data']:
+        return '', 404
+    try:
+        img_data = row['img_data']
+        header, encoded = img_data.split(',', 1)
+        mime = header.split(':')[1].split(';')[0]
+        img_bytes = base64.b64decode(encoded)
+        return Response(img_bytes, mimetype=mime,
+                        headers={'Cache-Control': 'public, max-age=86400'})
+    except Exception:
+        return '', 400
 
 @app.route('/api/orders/<order_id>/status', methods=['PATCH'])
 @owner_required

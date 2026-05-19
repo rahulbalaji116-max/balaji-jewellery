@@ -316,9 +316,15 @@ def delete_product(pid):
 @app.route('/api/orders', methods=['POST'])
 def place_order():
     data = request.json or {}
-    order_id = ('CORD-' if data.get('order_type') == 'custom' else 'ORD-') + str(int(datetime.now().timestamp() * 1000))
+    order_type = data.get('order_type', 'cart')
+    order_id = ('CORD-' if order_type == 'custom' else 'ORD-') + str(int(datetime.now().timestamp() * 1000))
     
     items_raw = data.get('items', [])
+    
+    # 🎯 FIX: Bundle custom uploaded image directly into items dict if custom structure is sent
+    if order_type == 'custom' and data.get('custom_image'):
+        items_raw = {'custom_image': data.get('custom_image')}
+
     items_json = json.dumps(items_raw) if isinstance(items_raw, (list, dict)) else str(items_raw)
 
     with get_db() as conn:
@@ -327,7 +333,7 @@ def place_order():
                 'INSERT INTO orders (id,timestamp,name,phone,address,note,items,total,status,order_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                 (order_id, datetime.now().isoformat(), data.get('name'), data.get('phone'),
                  data.get('address',''), data.get('note',''),
-                 items_json, data.get('total',0), 'new', data.get('order_type','cart'))
+                 items_json, data.get('total',0), 'new', order_type)
             )
         conn.commit()
 
@@ -341,7 +347,7 @@ def place_order():
         'items': items_raw,
         'total': data.get('total',0),
         'status': 'new',
-        'order_type': data.get('order_type','cart')
+        'order_type': order_type
     }
     broadcast('order_placed', order_payload)
     return jsonify({'ok': True, 'id': order_id})
@@ -401,14 +407,14 @@ def owner_status():
 def sse_stream():
     q = subscribe()
     def stream():
-        yield "event: connected\ndata: {}\n\n"
+        yield "event: connected\\ndata: {}\\n\\n"
         try:
             while True:
                 try:
                     msg = q.get(timeout=25)
                     yield msg
                 except Exception:
-                    yield ": heartbeat\n\n"
+                    yield ": heartbeat\\n\\n"
         finally:
             unsubscribe(q)
     return Response(stream(), mimetype='text/event-stream',

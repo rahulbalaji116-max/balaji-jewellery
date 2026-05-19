@@ -111,12 +111,7 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
 .order-body strong{color:var(--deep)}
 .status-select{border:1.5px solid #e8e0d0;border-radius:8px;padding:.35rem .75rem;font-size:.8rem;font-family:'Jost',sans-serif;outline:none;cursor:pointer;background:#fff;color:var(--deep)}
 .status-select:focus{border-color:var(--gold)}
-.status-pill{display:inline-block;font-size:.65rem;font-weight:600;padding:.25rem .7rem;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
-.status-pill.new{background:#EEF4FF;color:#3B82F6}
-.status-pill.confirmed{background:#ECFDF5;color:#16A34A}
-.status-pill.dispatched{background:#FFFBEB;color:#D97706}
-.status-pill.delivered{background:#F0FDF4;color:#15803D}
-.status-pill.cancelled{background:#FEF2F2;color:var(--red)}
+.status-pill{display:inline-block;font-size:.65rem;font-weight:600;padding:.25rem .7 vents;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
 .order-items{margin-top:.6rem;padding-top:.6rem;border-top:1px solid #f5efe2;font-size:.8rem;color:#888}
 
 /* ── EDIT MODAL ── */
@@ -145,8 +140,6 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
 </head>
 <body>
 
-<!-- ── LOGIN SCREEN ── -->
-<!-- ── MAIN APP ── -->
 <div class="app show" id="app">
   <div class="sidebar">
     <div class="sidebar-logo">
@@ -183,7 +176,6 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
       </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div class="section active" id="section-dashboard">
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-val gold" id="statProducts">—</div></div>
@@ -198,14 +190,9 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
           Any product you <strong>add, edit, or delete</strong> is broadcast instantly to the main website via Server-Sent Events (SSE).<br>
           All connected customers see the updated catalogue <strong>without refreshing</strong>.
         </p>
-        <div style="margin-top:1rem;padding:1rem;background:#fffbf3;border-radius:10px;border:1px solid #f0e8d0;font-size:.82rem;color:#888">
-          🌐 Main Site: <code style="color:var(--gold-d)">http://localhost:5000</code> &nbsp;|&nbsp;
-          🔐 Admin Panel: <code style="color:var(--gold-d)">http://localhost:5001</code>
-        </div>
       </div>
     </div>
 
-    <!-- PRODUCTS LIST -->
     <div class="section" id="section-products">
       <div class="panel-card">
         <h2>💎 All Products</h2>
@@ -226,7 +213,6 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
       </div>
     </div>
 
-    <!-- ADD PRODUCT -->
     <div class="section" id="section-add-product">
       <div class="panel-card">
         <h2>➕ Add New Product</h2>
@@ -261,7 +247,6 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
       </div>
     </div>
 
-    <!-- ORDERS -->
     <div class="section" id="section-orders">
       <div id="ordersList"><p style="color:#bbb;text-align:center;padding:3rem">Loading orders…</p></div>
     </div>
@@ -269,7 +254,6 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
   </div>
 </div>
 
-<!-- ── EDIT MODAL ── -->
 <div class="modal-overlay" id="editModal">
   <div class="modal-box">
     <h3>✏️ Edit Product</h3>
@@ -287,258 +271,301 @@ nav.sidebar-nav{padding:1rem 0;flex:1}
     <div class="fg"><label>Description</label><textarea id="editDesc"></textarea></div>
     <div class="modal-actions">
       <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
-      <button class="save-btn" onclick="saveEdit()">Save & Sync to Site</button>
+      <button class="save-btn" onclick="saveProductEdit()">Save Changes</button>
     </div>
   </div>
 </div>
 
-<!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
 
 <script>
-let editImgData = null;
-let newImgData = null;
+let globalProducts = [];
+let currentImgBase64 = null;
+let currentEditImgBase64 = null;
 
-// ── INIT ──
-async function initApp() {
-  await loadDashboard();
-  connectSSEStatus();
-}
-
-// ── NAV ──
-function showSection(name) {
+function showSection(sect) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(`section-${name}`).classList.add('active');
-  event.currentTarget.classList.add('active');
-  const titles = {dashboard:'Dashboard', products:'Products', 'add-product':'Add Product', orders:'Orders'};
-  document.getElementById('sectionTitle').textContent = titles[name] || name;
-  if (name === 'products') loadProductsTable();
-  if (name === 'orders') loadOrders();
-  if (name === 'dashboard') loadDashboard();
+  
+  const targetSect = document.getElementById('section-' + sect);
+  if(targetSect) targetSect.classList.add('active');
+  
+  // Highlighting active item
+  const navs = Array.from(document.querySelectorAll('.nav-item'));
+  const match = navs.find(n => n.textContent.toLowerCase().includes(sect));
+  if(match) match.classList.add('active');
+  
+  document.getElementById('sectionTitle').textContent = sect.charAt(0).toUpperCase() + sect.slice(1);
+  if(sect === 'orders') loadOrders();
+  if(sect === 'products' || sect === 'dashboard') loadData();
 }
 
-// ── API ──
-async function api(url, method='GET', body=null) {
-  const opts = {method, headers: {'Content-Type':'application/json'}};
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(url, opts);
-  return res;
+async function loadData() {
+  try {
+    const pRes = await fetch('/api/products');
+    const products = await pRes.json();
+    globalProducts = products;
+    
+    // Fill Dashboard Stats
+    document.getElementById('statProducts').textContent = products.length;
+    document.getElementById('statGold').textContent = products.filter(p => p.metal === 'gold').length;
+    document.getElementById('statSilver').textContent = products.filter(p => p.metal === 'silver').length;
+    
+    // Fill Products Table
+    const tbody = document.getElementById('productsTbody');
+    if(!products.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">No products found. Add some!</td></tr>`;
+      return;
+    }
+    
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td class="prod-name-col">
+          <div class="prod-thumb">
+            ${p.has_image ? `<img src="/api/products/${p.id}/image" />` : p.emoji || '💎'}
+          </div>
+          <strong>${p.name}</strong>
+        </td>
+        <td class="hide-mobile"><span class="badge ${p.metal}">${p.metal}</span></td>
+        <td class="hide-mobile">${p.type}</td>
+        <td><span class="price-text">₹${p.price}</span></td>
+        <td>
+          <div class="tbl-actions">
+            <button class="edit-btn" onclick="openEditModal(${p.id})">Edit</button>
+            <button class="del-btn" onclick="deleteProduct(${p.id})">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    
+    // Orders stats refresh
+    const oRes = await fetch('/api/orders');
+    const orders = await oRes.json();
+    document.getElementById('statOrders').textContent = orders.length;
+    const newOrdCount = orders.filter(o => o.status === 'new').length;
+    document.getElementById('statNew').textContent = newOrdCount;
+    
+    const badge = document.getElementById('ordersBadge');
+    if(newOrdCount > 0) {
+      badge.textContent = newOrdCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch(e) {
+    showToast("Error fetching database information", "error");
+  }
 }
 
-// ── DASHBOARD ──
-async function loadDashboard() {
-  const [pr, or] = await Promise.all([
-    fetch('/api/products').then(r => r.json()),
-    fetch('/api/orders').then(r => r.json())
-  ]);
-  document.getElementById('statProducts').textContent = pr.length;
-  document.getElementById('statGold').textContent = pr.filter(p => p.metal === 'gold').length;
-  document.getElementById('statSilver').textContent = pr.filter(p => p.metal === 'silver').length;
-  document.getElementById('statOrders').textContent = or.length;
-  const newOrders = or.filter(o => o.status === 'new').length;
-  document.getElementById('statNew').textContent = newOrders;
-  const badge = document.getElementById('ordersBadge');
-  if (newOrders > 0) { badge.textContent = newOrders; badge.style.display = 'inline'; }
-  else badge.style.display = 'none';
-}
-
-// ── PRODUCTS TABLE ──
-async function loadProductsTable() {
-  const res = await fetch('/api/products');
-  const products = await res.json();
-  const tbody = document.getElementById('productsTbody');
-  if (!products.length) {
-    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No products yet — add some!</td></tr>';
+// ── ORDERS RENDERER WITH CUSTOM DESIGN PREVIEW ──
+async function loadOrders() {
+  const res = await fetch('/api/orders');
+  const orders = await res.json();
+  const list = document.getElementById('ordersList');
+  if (!orders.length) {
+    list.innerHTML = '<p style="color:#bbb;text-align:center;padding:3rem">No orders found.</p>';
     return;
   }
-  tbody.innerHTML = products.map(p => `
-    <tr>
-      <td>
-        <div class="prod-name-col">
-          <div class="prod-thumb">${p.has_image ? `<img src="/api/products/${p.id}/image" alt="">` : p.emoji}</div>
-          <span>${p.name}</span>
+  
+  list.innerHTML = orders.map(o => {
+    let customImgHtml = '';
+    // Look for custom reference file inside the structured dictionary payload
+    if (o.order_type === 'custom' && o.items && o.items.custom_image) {
+      customImgHtml = `
+        <div style="margin-top: 12px; padding: 10px; background: #faf8f5; border: 1px solid var(--border); border-radius: 10px; display: inline-block;">
+          <p style="font-weight:600; font-size:0.75rem; color:#888; margin-bottom:6px;">🎨 CUSTOM REFERENCED DESIGN:</p>
+          <img src="${o.items.custom_image}" alt="Custom Jewelry" 
+               style="max-width:140px; max-height:140px; border-radius:8px; border:1px solid var(--border); cursor:pointer; object-fit:cover; display:block;" 
+               onclick="window.open('${o.items.custom_image}', '_blank')"/>
+          <small style="color:var(--gold-d); font-size:0.7rem; cursor:pointer; margin-top:4px; display:inline-block;" onclick="window.open('${o.items.custom_image}', '_blank')">🔍 Click to view full size</small>
         </div>
-      </td>
-      <td class="hide-mobile"><span class="badge ${p.metal}">${p.metal}</span></td>
-      <td class="hide-mobile" style="text-transform:capitalize">${p.type}</td>
-      <td><span class="price-text">₹${p.price}</span></td>
-      <td>
-        <div class="tbl-actions">
-          <button class="edit-btn" onclick="openEdit(${p.id})">Edit</button>
-          <button class="del-btn" onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g,"\\'")}')">Delete</button>
+      `;
+    }
+
+    return `
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <div class="order-id" style="font-weight:700; color:${o.order_type === 'custom' ? 'var(--gold-d)' : 'inherit'}">
+              ${o.order_type === 'custom' ? '✨ [CUSTOM DESIGN] ' : ''}${o.id}
+            </div>
+            <div class="order-time">${new Date(o.timestamp).toLocaleString('en-IN')}</div>
+          </div>
+          <select class="status-select" onchange="updateStatus('${o.id}', this.value)">
+            ${['new','confirmed','dispatched','delivered','cancelled'].map(s =>
+              `<option value="${s}" ${o.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`
+            ).join('')}
+          </select>
         </div>
-      </td>
-    </tr>
-  `).join('');
+        <div class="order-body">
+          <strong>Customer:</strong> ${o.name} &nbsp;·&nbsp; 📞 <strong>Phone:</strong> ${o.phone}
+          ${o.address ? `<br>📍 <strong>Address:</strong> ${o.address}` : ''}
+          ${o.note ? `<br>📝 <strong>Note:</strong> ${o.note}` : ''}
+        </div>
+        <div class="order-items">
+          ${o.order_type === 'custom' ? '🎨 Custom Uploaded Request Architecture' :
+            (Array.isArray(o.items) ? o.items.map(i => `${i.name} ×${i.qty||1}`).join(', ') : 'No items')}
+          ${o.total ? ` · <strong style="color:var(--gold-d)">₹${o.total.toLocaleString('en-IN')}</strong>` : ''}
+        </div>
+        ${customImgHtml}
+      </div>
+    `;
+  }).join('');
 }
 
-// ── ADD PRODUCT ──
+async function updateStatus(id, stat) {
+  const res = await fetch(`/api/orders/${id}/status`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: json.stringify({status: stat})
+  });
+  if(res.ok) {
+    showToast("Status updated securely!", "success");
+    loadData();
+  }
+}
+
+// ── IMAGE UTILS ──
 function previewImg(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    newImgData = ev.target.result;
-    document.getElementById('imgPreview').innerHTML = `<img src="${newImgData}" alt="">`;
+  const file = e.target.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = function() {
+    currentImgBase64 = r.result;
+    document.getElementById('imgPreview').innerHTML = `<img src="${r.result}" />`;
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
 
+function previewEditImg(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = function() {
+    currentEditImgBase64 = r.result;
+    document.getElementById('editImgPreview').innerHTML = `<img src="${r.result}" />`;
+  };
+  r.readAsDataURL(file);
+}
+
+// ── PRODUCT API HANDLERS ──
 async function addProduct() {
-  const name = document.getElementById('newName').value.trim();
-  const price = document.getElementById('newPrice').value.trim();
+  const name = document.getElementById('newName').value.strip();
+  const price = document.getElementById('newPrice').value.strip();
   const metal = document.getElementById('newMetal').value;
   const type = document.getElementById('newType').value;
-  const desc = document.getElementById('newDesc').value.trim();
-  if (!name || !price) { showToast('Name and price are required', 'error'); return; }
-  const btn = document.getElementById('addBtn');
-  btn.disabled = true; btn.textContent = 'Publishing…';
-  const res = await api('/api/products', 'POST', {name, price, metal, type, desc, img_data: newImgData});
-  btn.disabled = false; btn.textContent = '✦ Publish to Website';
-  if (res.ok) {
-    showToast('✅ Product published — main site updated!', 'success');
+  const desc = document.getElementById('newDesc').value.strip();
+  
+  if(!name || !price) { alert("Please complete required parameters!"); return; }
+  
+  const res = await fetch('/api/products', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: json.stringify({name, price, metal, type, desc, img_data: currentImgBase64})
+  });
+  
+  if(res.ok) {
+    showToast("New Item published cleanly!", "success");
+    // Clear Form inputs
     document.getElementById('newName').value = '';
     document.getElementById('newPrice').value = '';
     document.getElementById('newDesc').value = '';
-    document.getElementById('imgPreview').innerHTML = '<div class="ph"><div class="big">🖼️</div>Click to upload product image<br><small style="color:#ccc">JPG / PNG / WEBP</small></div>';
-    newImgData = null;
-    loadDashboard();
-  } else {
-    const err = await res.json();
-    showToast(err.error || 'Failed to add', 'error');
+    document.getElementById('imgPreview').innerHTML = `<div class="ph"><div class="big">🖼️</div>Click to upload product image</div>`;
+    currentImgBase64 = null;
+    showSection('products');
   }
 }
 
-// ── DELETE ──
-async function deleteProduct(pid, name) {
-  if (!confirm(`Delete "${name}"? This will remove it from the main site instantly.`)) return;
-  const res = await api(`/api/products/${pid}`, 'DELETE');
-  if (res.ok) {
-    showToast('🗑️ Deleted — main site updated', 'success');
-    loadProductsTable();
-    loadDashboard();
-  } else showToast('Delete failed', 'error');
-}
-
-// ── EDIT MODAL ──
-async function openEdit(pid) {
-  const res = await fetch('/api/products');
-  const products = await res.json();
-  const p = products.find(x => x.id === pid);
-  if (!p) return;
+function openEditModal(id) {
+  const p = globalProducts.find(x => x.id === id);
+  if(!p) return;
   document.getElementById('editId').value = p.id;
   document.getElementById('editName').value = p.name;
   document.getElementById('editPrice').value = p.price;
   document.getElementById('editMetal').value = p.metal;
   document.getElementById('editType').value = p.type;
   document.getElementById('editDesc').value = p.desc || '';
-  const prev = document.getElementById('editImgPreview');
-  if (p.has_image) prev.innerHTML = `<img src="/api/products/${p.id}/image" alt="">`;
-  else prev.innerHTML = `<div class="ph"><div class="big">${p.emoji}</div>Click to change image</div>`;
-  editImgData = null;
+  
+  if(p.has_image) {
+    document.getElementById('editImgPreview').innerHTML = `<img src="/api/products/${p.id}/image" />`;
+  } else {
+    document.getElementById('editImgPreview').innerHTML = `<div class="ph"><div class="big">🖼️</div>No current image assigned</div>`;
+  }
+  currentEditImgBase64 = null;
   document.getElementById('editModal').classList.add('show');
 }
 
-function closeEditModal() {
-  document.getElementById('editModal').classList.remove('show');
-}
+function closeEditModal() { document.getElementById('editModal').classList.remove('show'); }
 
-function previewEditImg(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    editImgData = ev.target.result;
-    document.getElementById('editImgPreview').innerHTML = `<img src="${editImgData}" alt="">`;
-  };
-  reader.readAsDataURL(file);
-}
-
-async function saveEdit() {
-  const pid = document.getElementById('editId').value;
-  const body = {
-    name: document.getElementById('editName').value.trim(),
-    price: document.getElementById('editPrice').value.trim(),
+async function saveProductEdit() {
+  const id = document.getElementById('editId').value;
+  const payload = {
+    name: document.getElementById('editName').value,
+    price: document.getElementById('editPrice').value,
     metal: document.getElementById('editMetal').value,
     type: document.getElementById('editType').value,
-    desc: document.getElementById('editDesc').value.trim(),
+    desc: document.getElementById('editDesc').value,
   };
-  if (editImgData) body.img_data = editImgData;
-  const res = await api(`/api/products/${pid}`, 'PUT', body);
-  if (res.ok) {
-    showToast('✅ Updated — main site synced!', 'success');
+  if(currentEditImgBase64) payload.img_data = currentEditImgBase64;
+  
+  const res = await fetch(`/api/products/${id}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: json.stringify(payload)
+  });
+  
+  if(res.ok) {
     closeEditModal();
-    loadProductsTable();
-    loadDashboard();
-  } else showToast('Update failed', 'error');
-}
-
-// ── ORDERS ──
-async function loadOrders() {
-  const res = await fetch('/api/orders');
-  const orders = await res.json();
-  const list = document.getElementById('ordersList');
-  if (!orders.length) {
-    list.innerHTML = '<p style="color:#bbb;text-align:center;padding:3rem">No orders yet.</p>';
-    return;
+    showToast("Product configuration saved!", "success");
+    loadData();
   }
-  list.innerHTML = orders.map(o => `
-    <div class="order-card">
-      <div class="order-header">
-        <div>
-          <div class="order-id">${o.id}</div>
-          <div class="order-time">${new Date(o.timestamp).toLocaleString('en-IN')}</div>
-        </div>
-        <select class="status-select" onchange="updateStatus('${o.id}', this.value)">
-          ${['new','confirmed','dispatched','delivered','cancelled'].map(s =>
-            `<option value="${s}" ${o.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`
-          ).join('')}
-        </select>
-      </div>
-      <div class="order-body">
-        <strong>${o.name}</strong> · 📞 ${o.phone}${o.address ? ` · 📍 ${o.address}` : ''}
-        ${o.note ? `<br>📝 ${o.note}` : ''}
-      </div>
-      <div class="order-items">
-        ${o.order_type === 'custom' ? '🎨 Custom Order' :
-          (Array.isArray(o.items) ? o.items.map(i => `${i.name} ×${i.qty||1}`).join(', ') : '')}
-        ${o.total ? ` · <strong style="color:var(--gold-d)">₹${o.total.toLocaleString('en-IN')}</strong>` : ''}
-      </div>
-    </div>
-  `).join('');
 }
 
-async function updateStatus(orderId, status) {
-  const res = await api(`/api/orders/${orderId}/status`, 'PATCH', {status});
-  if (res.ok) showToast(`Order status → ${status}`, 'success');
-  else showToast('Update failed', 'error');
+async function deleteProduct(id) {
+  if(!confirm("Are you sure you want to remove this item permanently?")) return;
+  const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+  if(res.ok) { showToast("Item cleared successfully", "success"); loadData(); }
 }
 
-// ── SSE STATUS (admin watches for confirmation its broadcasts worked) ──
-function connectSSEStatus() {
-  // Admin connects to main site's /events to confirm SSE is up
-  // Here we just show admin is "broadcasting" mode
-  const dot = document.getElementById('syncDot');
-  const txt = document.getElementById('syncText');
-  dot.classList.add('live');
-  txt.textContent = 'Live — syncing to main site';
-}
-
-// ── TOAST ──
-function showToast(msg, type='') {
+function showToast(msg, type="") {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = `toast show ${type}`;
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// Page is only reachable if logged in (Flask redirects otherwise)
-initApp();
-
-async function logout() {
-  await fetch('/api/owner/logout', {method:'POST'});
-  window.location.href = '/admin/login';
+function logout() {
+  fetch('/api/owner/logout', {method: 'POST'}).then(() => window.location.reload());
 }
 
+// ── SSE STREAM SYNC MANAGEMENT ──
+(function initSSE() {
+  const es = new EventSource('/events');
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncText');
+  
+  es.onopen = () => {
+    dot.className = "sync-dot live";
+    txt.textContent = "Live — System Synced";
+  };
+  
+  es.addEventListener('order_placed', () => {
+    showToast("✨ Boom! A new order arrived just now!", "success");
+    dot.classList.add('pulse');
+    setTimeout(() => dot.classList.remove('pulse'), 1000);
+    loadData();
+    if(document.getElementById('section-orders').classList.contains('active')) loadOrders();
+  });
+  
+  es.onerror = () => {
+    dot.className = "sync-dot";
+    txt.textContent = "Reconnecting loop…";
+  };
+})();
+
+// Initial trigger setup
+String.prototype.strip = function() { return this.trim(); };
+window.onload = () => loadData();
 </script>
 </body>
 </html>

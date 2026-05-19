@@ -22,7 +22,6 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 .nav-links button{background:none;border:none;color:rgba(255,255,255,.75);font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer;padding:.45rem .9rem;border-radius:8px;transition:all .2s;letter-spacing:.3px}
 .nav-links button:hover,.nav-links button.active{background:rgba(201,146,42,.15);color:var(--gold-l)}
 
-/* HAMBURGER & DRAWER MENU SYSTEM */
 .menu-toggle {
   display: none;
   background: none;
@@ -157,35 +156,6 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 .upload-zone p strong{display:block;color:var(--gold-d);font-size:.85rem;margin-bottom:.2rem}
 .preview-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem}
 .preview-row img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:2px solid #e0c880}
-/* OWNER PANEL */
-.owner-wrap{max-width:700px;margin:0 auto;padding:2.5rem 2rem}
-.owner-panel-card{background:#fff;border-radius:16px;border:1px solid #ede5d0;padding:2rem;margin-bottom:1.5rem}
-.owner-panel-card h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
-.product-img-preview{width:100%;height:180px;border-radius:10px;background:#f9f3e8;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;border:1.5px dashed #e0c880;cursor:pointer;position:relative}
-.product-img-preview img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.product-img-preview input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.owner-products-list{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem}
-.op-item{display:flex;align-items:center;gap:1rem;background:#fafaf7;border-radius:12px;border:1px solid #ede5d0;padding:.75rem 1rem}
-.op-img{width:52px;height:52px;border-radius:8px;background:#f0e8d8;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;flex-shrink:0}
-.op-img img{width:100%;height:100%;object-fit:cover;border-radius:8px}
-.op-info{flex:1}
-.op-name{font-weight:600;font-size:.85rem}
-.op-meta{font-size:.72rem;color:#999;margin-top:.15rem}
-.op-price{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold-d);font-weight:700;white-space:nowrap}
-.op-del{background:none;border:none;color:#ddd;cursor:pointer;font-size:1rem;padding:.25rem;transition:color .18s}
-.op-del:hover{color:var(--red)}
-/* ORDERS TABLE */
-.orders-table{width:100%;border-collapse:collapse;font-size:.82rem}
-.orders-table th{text-align:left;padding:.6rem .75rem;background:#f9f3e8;color:#666;font-weight:500;border-bottom:2px solid #ede5d0}
-.orders-table td{padding:.65rem .75rem;border-bottom:1px solid #f5efe2;vertical-align:top}
-.orders-table tr:hover td{background:#fffcf4}
-.badge{display:inline-block;padding:.2rem .6rem;border-radius:8px;font-size:.68rem;font-weight:600}
-.badge-new{background:#FFF3D4;color:var(--gold-d)}
-.badge-called{background:#D4EDDA;color:#155724}
-.badge-done{background:#cce5ff;color:#004085}
-.badge-custom{background:#e2d9f3;color:#5c3d9e}
-.status-select{border:1.5px solid #e8e0d0;border-radius:8px;padding:.25rem .5rem;font-size:.75rem;font-family:'Jost',sans-serif;cursor:pointer;background:#fff}
-/* CONTACT */
 .contact-wrap{max-width:700px;margin:0 auto;padding:2.5rem 2rem}
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2rem}
 .contact-card{background:#fff;border-radius:16px;border:1px solid #ede5d0;padding:1.5rem;text-align:center}
@@ -201,17 +171,14 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 .wa-big-btn:hover{background:#1da850}
 .hour-row{display:flex;justify-content:space-between;font-size:.8rem;padding:.3rem 0;border-bottom:1px solid #f5efe2;color:#666}
 .hour-row:last-child{border:none}
-/* WHY US */
 .why-section{background:var(--deep);padding:3.5rem 2rem}
 .why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;max-width:900px;margin:0 auto}
 .why-card{text-align:center;padding:1.75rem 1rem}
 .why-card .wi{font-size:2rem;margin-bottom:.75rem}
 .why-card h4{color:#fff;font-weight:600;font-size:.9rem;margin-bottom:.4rem}
 .why-card p{color:rgba(255,255,255,.45);font-size:.78rem;line-height:1.6}
-/* TOAST */
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--deep);color:#fff;padding:.9rem 1.4rem;border-radius:12px;font-size:.82rem;z-index:9999;border-left:4px solid var(--gold);pointer-events:none;opacity:0;transform:translateY(10px);transition:all .3s}
 .toast.show{opacity:1;transform:translateY(0)}
-/* SUCCESS */
 .success-wrap{text-align:center;padding:4rem 2rem;max-width:500px;margin:0 auto}
 .success-wrap .big-check{font-size:5rem;margin-bottom:1rem}
 .success-wrap h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;margin-bottom:.75rem}
@@ -219,13 +186,12 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 .success-wrap .detail-box{background:#fff;border-radius:14px;border:1px solid #ede5d0;padding:1.25rem;text-align:left;margin-bottom:1.5rem}
 .detail-box .dr{display:flex;justify-content:space-between;font-size:.82rem;padding:.3rem 0;border-bottom:1px solid #f5efe2;color:#666}
 .detail-box .dr:last-child{border:none;font-weight:600;color:var(--deep)}
-/* FIXED WA */
 .fixed-wa{position:fixed;bottom:1.5rem;left:1.5rem;background:#25D366;color:#fff;border:none;padding:.65rem 1.15rem;border-radius:30px;font-size:.8rem;cursor:pointer;font-family:'Jost',sans-serif;font-weight:500;display:flex;align-items:center;gap:.5rem;z-index:100;box-shadow:0 4px 14px rgba(37,211,102,.4)}
 
 @media(max-width:640px){
   .hero h1{font-size:2.2rem}
   nav .nav-links{display:none}
-  .menu-toggle {display:block} /* Show hamburger menu button on mobile screen */
+  .menu-toggle {display:block}
   .contact-grid{grid-template-columns:1fr}
   .form-row-2{grid-template-columns:1fr}
   .cart-wrap,.custom-wrap,.owner-wrap,.contact-wrap{padding:1.5rem 1rem}
@@ -236,21 +202,17 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 
 <nav>
   <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
-
   <div class="nav-logo" onclick="showPage('home')">
     <div class="nav-logo-text">Sri Balaji Jewellers<small>PODANUR · COIMBATORE</small></div>
   </div>
-  
   <div class="nav-links">
     <button onclick="showPage('home')" id="nb-home" class="active">Home</button>
     <button onclick="showPage('shop')" id="nb-shop">Shop</button>
     <button onclick="showPage('custom')" id="nb-custom">Custom Order</button>
     <button onclick="showPage('contact')" id="nb-contact">Contact</button>
   </div>
-
   <button class="nav-cart" onclick="showPage('cart')" title="Cart">
-    🛒
-    <span class="cart-badge" id="cartBadge">0</span>
+    🛒 <span class="cart-badge" id="cartBadge">0</span>
   </button>
 </nav>
 
@@ -332,6 +294,32 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
   <div class="cart-wrap">
     <div class="cart-title">🛒 Your Cart</div>
     <div id="cartContent"></div>
+    
+    <div class="checkout-form" id="checkoutFormSection" style="display: none; margin-top: 2rem;">
+      <h3>📋 Delivery & Confirmation Details</h3>
+      <div class="form-row-2">
+        <div class="fg">
+          <label>Your Name *</label>
+          <input type="text" id="ord-name" placeholder="Enter your full name">
+        </div>
+        <div class="fg">
+          <label>Phone Number *</label>
+          <input type="tel" id="ord-phone" placeholder="10-digit mobile number">
+        </div>
+      </div>
+      <div class="fg">
+        <label>Delivery Address / Notes (Optional)</label>
+        <textarea id="ord-address" placeholder="Enter your delivery location or specific instructions..."></textarea>
+      </div>
+      <button class="place-order-btn" onclick="submitStandardOrder()">✦ Confirm & Place Order</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="productDetailModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+  <div class="modal-box" style="background:#fff; border-radius:20px; padding:1.5rem; width:100%; max-width:480px; position:relative; border: 1px solid #ede5d0;">
+    <button onclick="closeProductModal()" style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.5rem; cursor:pointer; color:#aaa; z-index:10;">✕</button>
+    <div id="modalProductTarget"></div>
   </div>
 </div>
 
@@ -369,9 +357,9 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
       <div class="fg">
         <label>Upload Design Photo (optional)</label>
         <div class="upload-zone">
-          <input type="file" id="custPhoto" accept="image/*" multiple onchange="previewCustPhotos(event)">
+          <input type="file" id="custPhoto" accept="image/*" onchange="previewCustPhotos(event)">
           <div class="uz-icon">📸</div>
-          <p><strong>Tap to upload your design reference</strong>Up to 4 photos</p>
+          <p><strong>Tap to upload your design reference</strong>JPG, PNG, or WEBP formats</p>
           <div class="preview-row" id="custPreviewRow"></div>
         </div>
       </div>
@@ -421,7 +409,7 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
   <div class="success-wrap">
     <div class="big-check">✅</div>
     <h2>Order Confirmed!</h2>
-    <p>Thank you! Owner <strong>Balaji D</strong> will call you within <strong>30 minutes</strong> to confirm your order.</p>
+    <p>Thank you! Owner <strong>Balaji D</strong> will call you within <strong>30 minutes</strong> to confirm your details.</p>
     <div class="detail-box" id="orderSummaryBox"></div>
     <button class="btn-gold" style="width:100%;padding:1rem;border-radius:12px;font-size:.95rem;font-weight:600" onclick="showPage('shop')">Continue Shopping</button>
     <button class="wa-order-btn" onclick="openWhatsApp()" style="width:100%;padding:.85rem;border-radius:12px;margin-top:.65rem">💬 Also WhatsApp Us</button>
@@ -429,24 +417,21 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 </div>
 
 <button class="fixed-wa" onclick="openWhatsApp()">💬 WhatsApp</button>
-
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── STATE ───
+// --- GLOBAL ARCHITECTURE STATE ---
 let cart = [];
 let allProducts = [];
 let currentFilter = 'all';
-let uploadedImagesBase64 = [];
+let uploadedCustomImageBase64 = null;
 
 const OWNER_PHONE = "919894600661";
 
-// ─── INIT ───
 window.addEventListener('DOMContentLoaded', async () => {
   await loadProducts();
 });
 
-// ─── NAVIGATION ───
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
@@ -462,15 +447,11 @@ function showPage(pageId) {
   if(mobileBtn) mobileBtn.classList.add('active');
   
   window.scrollTo(0, 0);
-  if(pageId === 'cart') {
-    renderCart();
-  }
+  if(pageId === 'cart') renderCart();
 }
 
-// ─── MOBILE HAMBURGER LOGIC ───
 function toggleMobileMenu() {
-  const drawer = document.getElementById('mobileDrawer');
-  drawer.classList.toggle('open');
+  document.getElementById('mobileDrawer').classList.toggle('open');
 }
 
 function handleMobileNav(pageId) {
@@ -478,7 +459,6 @@ function handleMobileNav(pageId) {
   toggleMobileMenu(); 
 }
 
-// ─── API HELPERS ───
 async function api(url, method='GET', body=null) {
   const opts = { method, headers: {'Content-Type':'application/json'} };
   if (body) opts.body = JSON.stringify(body);
@@ -486,12 +466,11 @@ async function api(url, method='GET', body=null) {
     const res = await fetch(url, opts);
     return await res.json();
   } catch(e) {
-    console.error("API error, switching to fallback data mock context", e);
+    console.error("API Context Failure, falling back to static arrays", e);
     return [];
   }
 }
 
-// ─── PRODUCTS ───
 async function loadProducts(filter='all') {
   currentFilter = filter;
   let url = '/api/products';
@@ -503,10 +482,10 @@ async function loadProducts(filter='all') {
   let products = await api(url);
   if(!products || products.length === 0) {
     products = [
-      {id: 1, name: "Traditional Gold Haram", type: "necklace", metal: "gold", price: "1,45,000", emoji: "🥇", has_image: false},
-      {id: 2, name: "Classic Silver Anklet", type: "bangle", metal: "silver", price: "3,500", emoji: "🥈", has_image: false},
-      {id: 3, name: "Diamond Studded Gold Ring", type: "ring", metal: "gold", price: "28,000", emoji: "💍", has_image: false},
-      {id: 4, name: "Antique Jhumkas", type: "earring", metal: "gold", price: "64,200", emoji: "👑", has_image: false}
+      {id: 1, name: "Traditional Gold Haram", type: "necklace", metal: "gold", price: "1,45,000", emoji: "🥇", has_image: false, desc: "Pure 22k gold hallmark bridal long chain"},
+      {id: 2, name: "Classic Silver Anklet", type: "bangle", metal: "silver", price: "3,500", emoji: "🥈", has_image: false, desc: "Traditional 925 fine silver daily wear design"},
+      {id: 3, name: "Diamond Studded Gold Ring", type: "ring", metal: "gold", price: "28,000", emoji: "💍", has_image: false, desc: "Elegant design perfect for engagements"},
+      {id: 4, name: "Antique Jhumkas", type: "earring", metal: "gold", price: "64,200", emoji: "👑", has_image: false, desc: "Handcrafted intricate temple design collection"}
     ];
   }
   
@@ -524,14 +503,15 @@ async function loadProducts(filter='all') {
   renderFeaturedProducts(products); 
 }
 
+// FIX 2: TRIGGER INDIVIDUAL OVERLAY DISPLAY INSTEAD OF DIRECT ADD MUTATION
 function renderProducts(products) {
   const grid = document.getElementById('productsGrid');
   if (!products || products.length === 0) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="big">💎</div><p>No products in this category yet.<br>Check back soon!</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="big">💎</div><p>No products available.</p></div>`;
     return;
   }
   grid.innerHTML = products.map(p => `
-    <div class="product-card" onclick="addToCart(${p.id})">
+    <div class="product-card" onclick="openProductModal(${p.id})">
       <div class="pc-img" style="background:${p.metal==='gold'?'#FFF8E8':'#F0F0F8'}">
         ${p.has_image ? `<img src="/api/products/${p.id}/image" alt="${p.name}">` : `<span class="pc-emoji">${p.emoji||'💎'}</span>`}
         <span class="pc-badge ${p.metal}">${p.metal==='gold'?'Gold':'Silver'}</span>
@@ -541,7 +521,7 @@ function renderProducts(products) {
         <div class="pc-type">${p.type}</div>
         <div class="pc-foot">
           <div class="pc-price">₹${p.price}</div>
-          <button class="pc-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Add to Cart">+</button>
+          <button class="pc-add" onclick="event.stopPropagation(); openProductModal(${p.id})" title="View Details">+</button>
         </div>
       </div>
     </div>
@@ -550,14 +530,9 @@ function renderProducts(products) {
 
 function renderFeaturedProducts(products) {
   const grid = document.getElementById('featuredGrid');
-  if (!products || products.length === 0) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="big">💎</div><p>New pieces dropping soon!</p></div>`;
-    return;
-  }
-  const featuredItems = products.slice(0, 4);
-  
-  grid.innerHTML = featuredItems.map(p => `
-    <div class="product-card" onclick="showPage('shop')">
+  if (!products || products.length === 0) return;
+  grid.innerHTML = products.slice(0, 4).map(p => `
+    <div class="product-card" onclick="openProductModal(${p.id})">
       <div class="pc-img" style="background:${p.metal==='gold'?'#FFF8E8':'#F0F0F8'}">
         ${p.has_image ? `<img src="/api/products/${p.id}/image" alt="${p.name}">` : `<span class="pc-emoji">${p.emoji||'💎'}</span>`}
         <span class="pc-badge ${p.metal}">${p.metal==='gold'?'Gold':'Silver'}</span>
@@ -567,7 +542,7 @@ function renderFeaturedProducts(products) {
         <div class="pc-type">${p.type}</div>
         <div class="pc-foot">
           <div class="pc-price">₹${p.price}</div>
-          <button class="btn-gold" style="padding: .35rem .8rem; border-radius: 20px; font-size: .75rem;" onclick="event.stopPropagation(); showPage('shop')">View Item</button>
+          <button class="btn-gold" style="padding: .35rem .8rem; border-radius: 20px; font-size: .75rem;" onclick="event.stopPropagation(); openProductModal(${p.id})">View Item</button>
         </div>
       </div>
     </div>
@@ -580,35 +555,73 @@ function filterCat(el, val) {
   loadProducts(val);
 }
 
-function addToCart(pid) {
-  const prod = allProducts.find(p => p.id === pid);
-  if (!prod) return;
-  const existing = cart.find(c => c.id === pid);
-  if (existing) existing.qty++;
-  else cart.push({...prod, qty:1});
+// FIX 2: PRODUCT MODAL GENERATOR BLOCK
+function openProductModal(pid) {
+  const p = allProducts.find(x => x.id === pid);
+  if (!p) return;
+  
+  const target = document.getElementById('modalProductTarget');
+  const imgElement = p.has_image ? `<img src="/api/products/${p.id}/image" style="width:100%; height:240px; object-fit:cover; border-radius:12px; border:1px solid #ede5d0; display:block; margin-bottom:1rem;"/>` : 
+                                   `<div style="width:100%; height:200px; background:#faf6ee; display:flex; align-items:center; justify-content:center; font-size:5rem; border-radius:12px; margin-bottom:1rem;">${p.emoji||'💎'}</div>`;
+  
+  target.innerHTML = `
+    ${imgElement}
+    <div style="font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:700; line-height:1.2; margin-bottom:0.25rem;">${p.name}</div>
+    <div style="margin-bottom:0.75rem;"><span class="pc-badge ${p.metal}" style="position:static; display:inline-block;">${p.metal.toUpperCase()}</span> &middot; <span style="font-size:0.8rem; color:#aaa; text-transform:uppercase;">${p.type}</span></div>
+    <p style="font-size:0.88rem; color:#666; line-height:1.6; margin-bottom:1.25rem;">${p.desc || 'BIS certified handcrafted classic collection piece.'}</p>
+    <div style="display:flex; align-items:center; justify-content:between; border-top:1px solid #f5efe2; padding-top:1rem; gap:1rem;">
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:700; color:var(--gold-d);">₹${p.price}</div>
+      <div style="display:flex; gap:0.5rem; margin-left:auto;">
+        <button class="btn-ghost" style="color:var(--deep); border-color:#ccc; padding:0.6rem 1.2rem; border-radius:10px; font-size:0.82rem;" onclick="executeModalAction(${p.id}, 'cart')">Add to Cart</button>
+        <button class="btn-gold" style="padding:0.6rem 1.4rem; border-radius:10px; font-size:0.82rem;" onclick="executeModalAction(${p.id}, 'order')">Order Now</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('productDetailModal').style.display = 'flex';
+}
+
+function closeProductModal() {
+  document.getElementById('productDetailModal').style.display = 'none';
+}
+
+function executeModalAction(pid, action) {
+  const p = allProducts.find(x => x.id === pid);
+  if(!p) return;
+  
+  const inCart = cart.find(c => c.id === pid);
+  if (inCart) inCart.qty++;
+  else cart.push({...p, qty: 1});
+  
   updateCartBadge();
-  showToast('✦ Added to cart: ' + prod.name);
+  closeProductModal();
+  
+  if (action === 'cart') {
+    showToast('✦ Added to cart: ' + p.name);
+  } else if (action === 'order') {
+    showPage('cart');
+  }
 }
 
 function updateCartBadge() {
-  const total = cart.reduce((s,c) => s + c.qty, 0);
-  document.getElementById('cartBadge').textContent = total;
+  document.getElementById('cartBadge').textContent = cart.reduce((s,c) => s + c.qty, 0);
 }
 
-// ─── CART SYSTEM FUNCTIONS ───
 function renderCart() {
   const wrap = document.getElementById('cartContent');
+  const formSec = document.getElementById('checkoutFormSection');
+  
   if (cart.length === 0) {
-    wrap.innerHTML = `<div class="empty-state"><div class="big">🛒</div><p>Your cart is empty.<br>Browse our collection and add items!</p><br><button class="btn-gold" style="padding:.7rem 2rem;border-radius:30px" onclick="showPage('shop')">Browse Shop</button></div>`;
+    wrap.innerHTML = `<div class="empty-state"><div class="big">🛒</div><p>Your cart is empty.</p></div>`;
+    formSec.style.display = 'none';
     return;
   }
+  
+  formSec.style.display = 'block';
   const subtotal = cart.reduce((s,c) => s + parseInt(c.price.replace(/,/g,''))*c.qty, 0);
   
   let itemsHtml = cart.map(c => `
     <div class="cart-item">
-      <div class="ci-img">
-        ${c.has_image ? `<img src="/api/products/${c.id}/image" alt="${c.name}">` : (c.emoji||'💎')}
-      </div>
+      <div class="ci-img">${c.has_image ? `<img src="/api/products/${c.id}/image" alt="${c.name}">` : (c.emoji||'💎')}</div>
       <div class="ci-info">
         <div class="ci-name">${c.name}</div>
         <div class="ci-price">₹${c.price} × ${c.qty}</div>
@@ -635,12 +648,8 @@ function changeQty(pid, amt) {
   const item = cart.find(c => c.id === pid);
   if(!item) return;
   item.qty += amt;
-  if(item.qty <= 0) {
-    removeFromCart(pid);
-  } else {
-    updateCartBadge();
-    renderCart();
-  }
+  if(item.qty <= 0) removeFromCart(pid);
+  else { updateCartBadge(); renderCart(); }
 }
 
 function removeFromCart(pid) {
@@ -649,14 +658,121 @@ function removeFromCart(pid) {
   renderCart();
 }
 
+// FIX 1: EXTRACTS IMAGE METADATA AND PASSES IT TO SQLITE FOR STANDARD ORDER PREVIEWS
+async function submitStandardOrder() {
+  const name = document.getElementById('ord-name').value.trim();
+  const phone = document.getElementById('ord-phone').value.trim();
+  const address = document.getElementById('ord-address').value.trim();
+  
+  if(!name || !phone) { alert("Please input your name and phone number!"); return; }
+  
+  const subtotal = cart.reduce((s,c) => s + parseInt(c.price.replace(/,/g,''))*c.qty, 0);
+  const referenceProduct = allProducts.find(p => p.id === cart[0].id);
+  let orderImgData = null;
+  
+  if(referenceProduct && referenceProduct.has_image) {
+    try {
+      const imgRes = await fetch(`/api/products/${referenceProduct.id}/image`);
+      const blob = await imgRes.blob();
+      orderImgData = await new Promise(resolve => {
+        const r = new FileReader();
+        r.onloadend = () => resolve(r.result);
+        r.readAsDataURL(blob);
+      });
+    } catch(e) { console.error("Could not capture product image blob", e); }
+  }
+
+  const orderPayload = {
+    name, phone,
+    address: address || "Counter Pick-up",
+    note: `Items Profile: ${cart.map(c => `${c.name} (x${c.qty})`).join(', ')}`,
+    items: cart,
+    total: subtotal,
+    order_type: 'standard',
+    img_data: orderImgData
+  };
+  
+  const res = await fetch('/api/orders', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(orderPayload)
+  });
+  
+  if(res.ok) {
+    document.getElementById('orderSummaryBox').innerHTML = `
+      <div class="dr"><span>Customer</span><strong>${name}</strong></div>
+      <div class="dr"><span>Items Total</span><strong>₹${subtotal.toLocaleString('en-IN')}</strong></div>
+    `;
+    cart = []; updateCartBadge(); showPage('success');
+  }
+}
+
+function previewCustPhotos(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = function() {
+    uploadedCustomImageBase64 = r.result;
+    document.getElementById('custPreviewRow').innerHTML = `<img src="${r.result}" style="width:72px; height:72px; object-fit:cover; border-radius:8px; border:2px solid #e0c880;" />`;
+  };
+  r.readAsDataURL(file);
+}
+
+// FIX 1: PASSES DESIGN PATH BASE64 BLOCKS TO THE BACKEND DATABASE
+async function submitCustomOrder() {
+  const name = document.getElementById('cust-name').value.trim();
+  const phone = document.getElementById('cust-phone').value.trim();
+  const metal = document.getElementById('cust-metal').value;
+  const type = document.getElementById('cust-type').value;
+  const requirements = document.getElementById('cust-msg').value.trim();
+  
+  if(!name || !phone || !metal || !type || !requirements) { alert("Please complete all fields!"); return; }
+  
+  const customPayload = {
+    name, phone,
+    address: "Custom Design Request Pipeline",
+    note: `[${metal} — ${type}] Requirements: ${requirements}`,
+    items: [{name: `Custom ${metal} ${type}`, qty: 1}],
+    total: 0,
+    order_type: 'custom',
+    img_data: uploadedCustomImageBase64
+  };
+  
+  const res = await fetch('/api/orders', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(customPayload)
+  });
+  
+  if(res.ok) {
+    document.getElementById('orderSummaryBox').innerHTML = `
+      <div class="dr"><span>Requestor</span><strong>${name}</strong></div>
+      <div class="dr"><span>Ornament Spec</span><strong>${type} (${metal})</strong></div>
+    `;
+    document.getElementById('cust-name').value = '';
+    document.getElementById('cust-phone').value = '';
+    document.getElementById('cust-msg').value = '';
+    document.getElementById('custPreviewRow').innerHTML = '';
+    uploadedCustomImageBase64 = null;
+    showPage('success');
+  }
+}
+
+function waCustomOrder() {
+  const name = document.getElementById('cust-name').value.trim() || "Customer";
+  const metal = document.getElementById('cust-metal').value || "Gold/Silver";
+  const type = document.getElementById('cust-type').value || "Jewellery";
+  const requirements = document.getElementById('cust-msg').value.trim() || "Custom design request";
+  const text = encodeURIComponent(`✨ *Sri Balaji Jewellers — Custom Design Request*\n\n*Name:* ${name}\n*Metal:* ${metal}\n*Item Type:* ${type}\n*Requirements:* ${requirements}`);
+  window.open(`https://wa.me/${OWNER_PHONE}?text=${text}`, '_blank');
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ─── UTILITIES & EXTERNAL APIS ───
 function openWhatsApp() {
   window.open(`https://wa.me/${OWNER_PHONE}`, '_blank');
 }

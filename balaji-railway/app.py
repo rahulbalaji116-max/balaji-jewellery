@@ -5,7 +5,7 @@ Single server that runs both the main website and admin panel.
 URLs:
   /          → Main customer website
   /admin     → Admin panel (PIN protected)
-  /api/*     → Shared API
+  /api/* → Shared API
   /events    → SSE stream for real-time sync
 """
 import os, json, uuid, base64, queue, threading
@@ -26,11 +26,8 @@ REDIS_URL    = os.environ.get('REDIS_URL')             # set by Railway Redis pl
 
 # ─── IMAGE STORAGE ───
 # On Railway, local filesystem is ephemeral so we store images as base64 in DB.
-# If you want persistent image storage, add Cloudinary (free tier) later.
 
 # ─── SSE BUS ───
-# Uses Redis pub/sub if available (works across multiple Railway replicas),
-# falls back to in-process queue (fine for single instance).
 _listeners: list[queue.Queue] = []
 _lock = threading.Lock()
 
@@ -80,7 +77,6 @@ def broadcast(event: str, data: dict):
         for q in dead:
             _listeners.remove(q)
 
-# If Redis is available, start a subscriber thread that feeds in-process queues
 def _redis_subscriber():
     import redis as redis_lib
     r = redis_lib.from_url(REDIS_URL)
@@ -216,7 +212,6 @@ def get_products():
             else:
                 cur.execute('SELECT * FROM products ORDER BY id DESC')
             rows = cur.fetchall()
-    # Convert img_data to a URL-friendly flag for the frontend
     result = []
     for r in rows:
         p = dict(r)
@@ -226,7 +221,6 @@ def get_products():
 
 @app.route('/api/products/<int:pid>/image')
 def product_image(pid):
-    """Serve product image stored as base64 in DB."""
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute('SELECT img_data FROM products WHERE id=%s', (pid,))
@@ -234,7 +228,6 @@ def product_image(pid):
     if not row or not row['img_data']:
         return '', 404
     img_data = row['img_data']
-    # img_data is like "data:image/jpeg;base64,..."
     header, encoded = img_data.split(',', 1)
     mime = header.split(':')[1].split(';')[0]
     img_bytes = base64.b64decode(encoded)
@@ -322,17 +315,35 @@ def delete_product(pid):
 # ════════════════════════════════
 @app.route('/api/orders', methods=['POST'])
 def place_order():
-    data = request.json
+    data = request.json or {}
     order_id = ('CORD-' if data.get('order_type') == 'custom' else 'ORD-') + str(int(datetime.now().timestamp() * 1000))
+    
+    items_raw = data.get('items', [])
+    items_json = json.dumps(items_raw) if isinstance(items_raw, (list, dict)) else str(items_raw)
+
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 'INSERT INTO orders (id,timestamp,name,phone,address,note,items,total,status,order_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                 (order_id, datetime.now().isoformat(), data.get('name'), data.get('phone'),
                  data.get('address',''), data.get('note',''),
-                 json.dumps(data.get('items',[])), data.get('total',0), 'new', data.get('order_type','cart'))
+                 items_json, data.get('total',0), 'new', data.get('order_type','cart'))
             )
         conn.commit()
+
+    order_payload = {
+        'id': order_id,
+        'timestamp': datetime.now().isoformat(),
+        'name': data.get('name'),
+        'phone': data.get('phone'),
+        'address': data.get('address',''),
+        'note': data.get('note',''),
+        'items': items_raw,
+        'total': data.get('total',0),
+        'status': 'new',
+        'order_type': data.get('order_type','cart')
+    }
+    broadcast('order_placed', order_payload)
     return jsonify({'ok': True, 'id': order_id})
 
 @app.route('/api/orders')

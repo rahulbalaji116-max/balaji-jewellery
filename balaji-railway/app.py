@@ -118,7 +118,7 @@ def init_db():
                     metal TEXT NOT NULL,
                     type TEXT NOT NULL,
                     price TEXT NOT NULL,
-                    desc TEXT,
+                    "desc" TEXT,
                     img_data TEXT,
                     emoji TEXT,
                     created_at TIMESTAMP DEFAULT NOW()
@@ -151,7 +151,7 @@ def init_db():
                 ]
                 for d in defaults:
                     cur.execute(
-                        'INSERT INTO products (name,metal,type,price,desc,emoji) VALUES (%s,%s,%s,%s,%s,%s)',
+                        'INSERT INTO products (name,metal,type,price,"desc",emoji) VALUES (%s,%s,%s,%s,%s,%s)',
                         d
                     )
         conn.commit()
@@ -260,7 +260,7 @@ def add_product():
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                'INSERT INTO products (name,metal,type,price,desc,img_data,emoji) VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING *',
+                'INSERT INTO products (name,metal,type,price,"desc",img_data,emoji) VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING *',
                 (name, metal, type_, price, desc, img_data, emoji)
             )
             prod = dict(cur.fetchone())
@@ -293,7 +293,7 @@ def update_product(pid):
             emoji = emoji_map.get(type_, '💎')
 
             cur.execute(
-                'UPDATE products SET name=%s,metal=%s,type=%s,price=%s,desc=%s,img_data=%s,emoji=%s WHERE id=%s RETURNING *',
+                'UPDATE products SET name=%s,metal=%s,type=%s,price=%s,"desc"=%s,img_data=%s,emoji=%s WHERE id=%s RETURNING *',
                 (name, metal, type_, price, desc, img_data, emoji, pid)
             )
             updated = dict(cur.fetchone())

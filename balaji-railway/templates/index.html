@@ -21,6 +21,54 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 .nav-links{display:flex;gap:.25rem}
 .nav-links button{background:none;border:none;color:rgba(255,255,255,.75);font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer;padding:.45rem .9rem;border-radius:8px;transition:all .2s;letter-spacing:.3px}
 .nav-links button:hover,.nav-links button.active{background:rgba(201,146,42,.15);color:var(--gold-l)}
+
+/* HAMBURGER & DRAWER MENU SYSTEM */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: .5rem;
+  line-height: 1;
+}
+.mobile-drawer {
+  position: fixed;
+  top: 66px;
+  left: 0;
+  width: 100%;
+  background: var(--deep);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  z-index: 199;
+  transform: translateY(-120%);
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+.mobile-drawer.open {
+  transform: translateY(0);
+}
+.mobile-drawer button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Jost', sans-serif;
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mobile-drawer button:hover, .mobile-drawer button.active {
+  background: rgba(201, 146, 42, 0.15);
+  color: var(--gold-l);
+  padding-left: 2.5rem;
+}
+
 .nav-cart{position:relative;background:var(--gold);border:none;color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
 .nav-cart:hover{background:var(--gold-d)}
 .cart-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;width:18px;height:18px;border-radius:50%;font-size:.6rem;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid var(--deep)}
@@ -173,9 +221,11 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 .detail-box .dr:last-child{border:none;font-weight:600;color:var(--deep)}
 /* FIXED WA */
 .fixed-wa{position:fixed;bottom:1.5rem;left:1.5rem;background:#25D366;color:#fff;border:none;padding:.65rem 1.15rem;border-radius:30px;font-size:.8rem;cursor:pointer;font-family:'Jost',sans-serif;font-weight:500;display:flex;align-items:center;gap:.5rem;z-index:100;box-shadow:0 4px 14px rgba(37,211,102,.4)}
+
 @media(max-width:640px){
   .hero h1{font-size:2.2rem}
   nav .nav-links{display:none}
+  .menu-toggle {display:block} /* Show hamburger menu button on mobile screen */
   .contact-grid{grid-template-columns:1fr}
   .form-row-2{grid-template-columns:1fr}
   .cart-wrap,.custom-wrap,.owner-wrap,.contact-wrap{padding:1.5rem 1rem}
@@ -185,20 +235,31 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
 <body>
 
 <nav>
+  <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+
   <div class="nav-logo" onclick="showPage('home')">
     <div class="nav-logo-text">Sri Balaji Jewellers<small>PODANUR · COIMBATORE</small></div>
   </div>
+  
   <div class="nav-links">
     <button onclick="showPage('home')" id="nb-home" class="active">Home</button>
     <button onclick="showPage('shop')" id="nb-shop">Shop</button>
     <button onclick="showPage('custom')" id="nb-custom">Custom Order</button>
     <button onclick="showPage('contact')" id="nb-contact">Contact</button>
   </div>
+
   <button class="nav-cart" onclick="showPage('cart')" title="Cart">
     🛒
     <span class="cart-badge" id="cartBadge">0</span>
   </button>
 </nav>
+
+<div class="mobile-drawer" id="mobileDrawer">
+  <button onclick="handleMobileNav('home')" id="mb-home" class="active">Home</button>
+  <button onclick="handleMobileNav('shop')" id="mb-shop">Shop</button>
+  <button onclick="handleMobileNav('custom')" id="mb-custom">Custom Order</button>
+  <button onclick="handleMobileNav('contact')" id="mb-contact">Contact</button>
+</div>
 
 <div class="page active" id="page-home">
   <div class="hero">
@@ -330,7 +391,6 @@ nav{background:var(--deep);display:flex;align-items:center;justify-content:space
       <div class="map-address">
         <strong>Sri Balaji Jewellers</strong><br>
         148/1 Main Road, Near PVG Mahal,<br>
-        148/1 Main Road, Near PVG Mahal,<br>
         Podanur, Coimbatore – 641023<br>
         Tamil Nadu, India
       </div>
@@ -376,17 +436,32 @@ window.addEventListener('DOMContentLoaded', async () => {
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mobile-drawer button').forEach(b => b.classList.remove('active'));
   
   const targetPage = document.getElementById('page-' + pageId);
   if(targetPage) targetPage.classList.add('active');
   
   const navBtn = document.getElementById('nb-' + pageId);
   if(navBtn) navBtn.classList.add('active');
+
+  const mobileBtn = document.getElementById('mb-' + pageId);
+  if(mobileBtn) mobileBtn.classList.add('active');
   
   window.scrollTo(0, 0);
   if(pageId === 'cart') {
     renderCart();
   }
+}
+
+// ─── MOBILE HAMBURGER LOGIC ───
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobileDrawer');
+  drawer.classList.toggle('open');
+}
+
+function handleMobileNav(pageId) {
+  showPage(pageId);
+  toggleMobileMenu(); // Close the menu panel automatically after click selection
 }
 
 // ─── API HELPERS ───
@@ -411,7 +486,6 @@ async function loadProducts(filter='all') {
     else url += '?type=' + filter;
   }
   
-  // Real API fetching with static structural data layout as graceful fallback
   let products = await api(url);
   if(!products || products.length === 0) {
     products = [
@@ -424,7 +498,6 @@ async function loadProducts(filter='all') {
   
   allProducts = products;
   
-  // Apply category filtering locally if mock data context is active
   let filtered = products;
   if(filter !== 'all') {
     if(['gold', 'silver'].includes(filter)) {
@@ -541,146 +614,15 @@ function removeFromCart(pid) {
   renderCart();
 }
 
-async function placeOrder() {
-  const name = document.getElementById('co-name').value.trim();
-  const phone = document.getElementById('co-phone').value.trim();
-  if (!name || !phone) { showToast('⚠️ Please enter your name and phone number'); return; }
-  if (!/^\d{10}$/.test(phone)) { showToast('⚠️ Enter a valid 10-digit phone number'); return; }
-
-  const btn = document.getElementById('placeOrderBtn');
-  btn.disabled = true; btn.textContent = 'Placing order...';
-
-  const subtotal = cart.reduce((s,c) => s + parseInt(c.price.replace(/,/g,''))*c.qty, 0);
-  const items = cart.map(c => ({name:c.name, qty:c.qty, price:c.price}));
-
-  const res = await api('/api/orders', 'POST', {
-    name, phone,
-    address: document.getElementById('co-addr')?.value.trim() || '',
-    note: document.getElementById('co-note')?.value.trim() || '',
-    items, total: subtotal, order_type: 'cart'
-  });
-
-  // Display summary inside checked box dynamic container updates
-  const summaryBox = document.getElementById('orderSummaryBox');
-  if(summaryBox){
-    summaryBox.innerHTML = `
-      <div class="dr"><span>Customer:</span><strong>${name}</strong></div>
-      <div class="dr"><span>Items Total:</span><strong>₹${subtotal.toLocaleString('en-IN')}</strong></div>
-    `;
-  }
-
-  // Clear out checkout states elements cleanly
-  cart = [];
-  updateCartBadge();
-  showPage('success');
-}
-
-// ─── WHATSAPP INTEGRATION ENGINE ───
-function openWhatsApp(customText = "") {
-  let url = `https://wa.me/${OWNER_PHONE}`;
-  if(customText) {
-    url += `?text=${encodeURIComponent(customText)}`;
-  }
-  window.open(url, '_blank');
-}
-
-function waCartOrder() {
-  const name = document.getElementById('co-name').value.trim();
-  const phone = document.getElementById('co-phone').value.trim();
-  const addr = document.getElementById('co-addr').value.trim();
-  const note = document.getElementById('co-note').value.trim();
-
-  if(!name || !phone) { showToast('⚠️ Please provide name and phone first'); return; }
-
-  let msg = `✨ *New Order - Sri Balaji Jewellers* ✨%0A%0A`;
-  msg += `👤 *Name:* ${name}%0A`;
-  msg += `📞 *Phone:* ${phone}%0A`;
-  if(addr) msg += `📍 *Address:* ${addr}%0A`;
-  if(note) msg += `📝 *Note:* ${note}%0A`;
-  msg += `%0A🛍️ *Items Ordered:*%0A`;
-
-  cart.forEach(c => {
-    msg += `• ${c.name} (x${c.qty}) - ₹${c.price}%0A`;
-  });
-
-  const subtotal = cart.reduce((s,c) => s + parseInt(c.price.replace(/,/g,''))*c.qty, 0);
-  msg += `%0A💰 *Total Value:* ₹${subtotal.toLocaleString('en-IN')}`;
-
-  window.open(`https://wa.me/${OWNER_PHONE}?text=${msg}`, '_blank');
-}
-
-// ─── CUSTOM DESIGNS MODULE ───
-function previewCustPhotos(event) {
-  const files = event.target.files;
-  const row = document.getElementById('custPreviewRow');
-  row.innerHTML = "";
-  uploadedImagesBase64 = [];
-
-  if(files.length > 4) {
-    showToast("⚠️ You can upload up to 4 images maximum");
-    return;
-  }
-
-  for(let i=0; i<files.length; i++) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      uploadedImagesBase64.push(e.target.result);
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      row.appendChild(img);
-    }
-    reader.readAsDataURL(files[i]);
-  }
-}
-
-async function submitCustomOrder() {
-  const name = document.getElementById('cust-name').value.trim();
-  const phone = document.getElementById('cust-phone').value.trim();
-  const metal = document.getElementById('cust-metal').value;
-  const type = document.getElementById('cust-type').value;
-  const msg = document.getElementById('cust-msg').value.trim();
-
-  if(!name || !phone || !metal || !type || !msg) {
-    showToast("⚠️ Please fill in all required fields marked with *");
-    return;
-  }
-
-  const payload = { name, phone, metal, type, message: msg, images: uploadedImagesBase64, order_type: 'custom' };
-  await api('/api/orders', 'POST', payload);
-
-  const summaryBox = document.getElementById('orderSummaryBox');
-  if(summaryBox){
-    summaryBox.innerHTML = `
-      <div class="dr"><span>Custom Request:</span><strong>${type} (${metal})</strong></div>
-      <div class="dr"><span>Client Name:</span><strong>${name}</strong></div>
-    `;
-  }
-  showPage('success');
-}
-
-function waCustomOrder() {
-  const name = document.getElementById('cust-name').value.trim();
-  const phone = document.getElementById('cust-phone').value.trim();
-  const metal = document.getElementById('cust-metal').value;
-  const type = document.getElementById('cust-type').value;
-  const reqs = document.getElementById('cust-msg').value.trim();
-
-  let text = `🎨 *Custom Jewellery Design Enquiry* 🎨%0A%0A`;
-  if(name) text += `👤 *Name:* ${name}%0A`;
-  if(phone) text += `📞 *Phone:* ${phone}%0A`;
-  if(metal) text += `👑 *Metal Purity:* ${metal}%0A`;
-  if(type) text += `💎 *Category:* ${type}%0A`;
-  if(reqs) text += `📝 *Requirements:* ${reqs}%0A`;
-
-  window.open(`https://wa.me/${OWNER_PHONE}?text=${text}`, '_blank');
-}
-
-// ─── TOAST NOTIFICATION UTILITY ───
-function showToast(text) {
+function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = text;
+  t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function openWhatsApp() {
+  window.open(`https://wa.me/${OWNER_PHONE}`, '_blank');
 }
 </script>
 </body>

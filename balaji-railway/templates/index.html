@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sri Balaji Jewellers – Gold & Silver · Podanur, Coimbatore</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C9922A;--gold-l:#F0C96B;--gold-d:#8B6318;
+  --cream:#FFF8EE;--deep:#1A0A00;--red:#C0392B;
+  --silver:#9BA0AB;--bg:#FAFAF7;
+}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--deep);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+nav{background:var(--deep);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:66px;position:sticky;top:0;z-index:200}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.nav-logo-text{color:#fff;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;line-height:1.2}
+.nav-logo-text small{display:block;font-family:'Jost',sans-serif;font-weight:300;font-size:.65rem;color:var(--gold-l);letter-spacing:2px}
+.nav-links{display:flex;gap:.25rem}
+.nav-links button{background:none;border:none;color:rgba(255,255,255,.75);font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer;padding:.45rem .9rem;border-radius:8px;transition:all .2s;letter-spacing:.3px}
+.nav-links button:hover,.nav-links button.active{background:rgba(201,146,42,.15);color:var(--gold-l)}
+.nav-cart{position:relative;background:var(--gold);border:none;color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.nav-cart:hover{background:var(--gold-d)}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;width:18px;height:18px;border-radius:50%;font-size:.6rem;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid var(--deep)}
+.page{display:none}.page.active{display:block}
+.hero{background:linear-gradient(135deg,#1A0A00 0%,#3D1C00 50%,#7A5520 100%);min-height:480px;display:flex;align-items:center;padding:3.5rem 2rem;position:relative;overflow:hidden}
+.hero::after{content:'✦';position:absolute;right:3rem;top:50%;transform:translateY(-50%);font-size:18rem;color:rgba(201,146,42,.06);pointer-events:none;line-height:1}
+.hero-inner{max-width:560px;z-index:1}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;background:rgba(201,146,42,.18);border:1px solid rgba(201,146,42,.4);color:var(--gold-l);font-size:.68rem;letter-spacing:3px;padding:.3rem 1rem;border-radius:30px;margin-bottom:1.25rem;text-transform:uppercase}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:3.2rem;color:#fff;line-height:1.1;margin-bottom:1rem;font-weight:600}
+.hero h1 em{color:var(--gold-l);font-style:normal}
+.hero p{color:rgba(255,255,255,.65);font-size:.92rem;line-height:1.8;margin-bottom:2rem}
+.hero-actions{display:flex;gap:.85rem;flex-wrap:wrap}
+.btn-gold{background:var(--gold);color:#fff;border:none;padding:.72rem 1.8rem;border-radius:30px;font-size:.88rem;font-family:'Jost',sans-serif;font-weight:500;cursor:pointer;transition:background .2s;letter-spacing:.3px}
+.btn-gold:hover{background:var(--gold-d)}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);padding:.72rem 1.8rem;border-radius:30px;font-size:.88rem;font-family:'Jost',sans-serif;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--gold-l);color:var(--gold-l)}
+.hero-stats{display:flex;gap:2.5rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.1)}
+.hstat-num{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold-l);font-weight:600}
+.hstat-label{font-size:.65rem;color:rgba(255,255,255,.45);letter-spacing:1.5px;text-transform:uppercase;margin-top:.1rem}
+.section{padding:3.5rem 2rem}
+.sec-head{text-align:center;margin-bottom:2.5rem}
+.sec-tag{font-size:.68rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:.6rem;font-weight:500}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--deep);font-weight:600}
+.sec-title span{color:var(--gold)}
+.cat-pills{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:2rem}
+.cat-pill{padding:.4rem 1.2rem;border-radius:30px;border:1.5px solid #e0d4b8;font-size:.8rem;cursor:pointer;background:#fff;color:#666;font-family:'Jost',sans-serif;transition:all .18s}
+.cat-pill:hover,.cat-pill.active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem}
+.product-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid #ede5d0;transition:transform .22s,box-shadow .22s;cursor:pointer}
+.product-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.1)}
+.pc-img{height:200px;position:relative;overflow:hidden;background:#f9f3e8;display:flex;align-items:center;justify-content:center}
+.pc-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.pc-img .pc-emoji{font-size:5rem;z-index:0}
+.pc-badge{position:absolute;top:10px;left:10px;font-size:.6rem;font-weight:600;padding:.25rem .65rem;border-radius:8px;text-transform:uppercase;letter-spacing:.5px;z-index:2}
+.pc-badge.gold{background:#FFF3D4;color:var(--gold-d)}
+.pc-badge.silver{background:#EDEDF5;color:#555}
+.pc-body{padding:.9rem 1rem 1rem}
+.pc-name{font-weight:600;font-size:.9rem;margin-bottom:.2rem}
+.pc-type{font-size:.72rem;color:var(--silver);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem}
+.pc-foot{display:flex;align-items:center;justify-content:space-between}
+.pc-price{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold-d);font-weight:700}
+.pc-add{background:var(--gold);color:#fff;border:none;width:34px;height:34px;border-radius:50%;font-size:1.3rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s;flex-shrink:0}
+.pc-add:hover{background:var(--gold-d)}
+.empty-state{text-align:center;padding:4rem 2rem;color:#aaa}
+.empty-state .big{font-size:3.5rem;margin-bottom:1rem}
+.empty-state p{font-size:.9rem;line-height:1.7}
+.cart-wrap{max-width:680px;margin:0 auto;padding:2.5rem 2rem}
+.cart-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;margin-bottom:1.75rem;display:flex;align-items:center;gap:.6rem}
+.cart-items{display:flex;flex-direction:column;gap:.85rem;margin-bottom:2rem}
+.cart-item{background:#fff;border-radius:14px;border:1px solid #ede5d0;display:flex;align-items:center;gap:1rem;padding:.85rem 1rem}
+.ci-img{width:58px;height:58px;border-radius:10px;background:#f9f3e8;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;overflow:hidden}
+.ci-img img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.ci-info{flex:1}
+.ci-name{font-weight:600;font-size:.88rem;margin-bottom:.15rem}
+.ci-price{font-size:.8rem;color:var(--gold-d);font-weight:500}
+.ci-remove{background:none;border:none;font-size:1.1rem;cursor:pointer;color:#ccc;transition:color .18s;padding:.25rem}
+.ci-remove:hover{color:var(--red)}
+.cart-summary{background:#fff;border-radius:14px;border:1px solid #ede5d0;padding:1.25rem 1.5rem;margin-bottom:2rem}
+.cart-summary h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;margin-bottom:1rem;font-weight:600}
+.sum-row{display:flex;justify-content:space-between;font-size:.85rem;padding:.35rem 0;border-bottom:1px solid #f5efe2;color:#666}
+.sum-row:last-child{border:none;font-weight:600;color:var(--deep);font-size:.95rem;padding-top:.5rem}
+.checkout-form{background:#fff;border-radius:14px;border:1px solid #ede5d0;padding:1.5rem}
+.checkout-form h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;margin-bottom:1.25rem;font-weight:600}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.75rem;font-weight:500;color:#666;margin-bottom:.35rem;letter-spacing:.3px;text-transform:uppercase}
+.fg input,.fg textarea,.fg select{width:100%;padding:.65rem .9rem;border:1.5px solid #e8e0d0;border-radius:10px;font-family:'Jost',sans-serif;font-size:.88rem;color:var(--deep);outline:none;transition:border-color .18s;background:#fff}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--gold)}
+.fg textarea{resize:vertical;min-height:70px}
+.place-order-btn{width:100%;background:var(--gold);color:#fff;border:none;padding:1rem;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif;letter-spacing:.5px;transition:background .2s;margin-top:.5rem}
+.place-order-btn:hover{background:var(--gold-d)}
+.place-order-btn:disabled{opacity:.6;cursor:not-allowed}
+.wa-order-btn{width:100%;background:#25D366;color:#fff;border:none;padding:.85rem;border-radius:12px;font-size:.88rem;font-weight:500;cursor:pointer;font-family:'Jost',sans-serif;margin-top:.65rem;transition:background .2s}
+.wa-order-btn:hover{background:#1da850}
+.custom-wrap{max-width:620px;margin:0 auto;padding:2.5rem 2rem}
+.custom-hero{background:linear-gradient(135deg,#1A0A00,#3D1C00);border-radius:20px;padding:2.25rem;margin-bottom:2rem;color:#fff;text-align:center}
+.custom-hero h2{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;margin-bottom:.5rem}
+.custom-hero h2 span{color:var(--gold-l)}
+.custom-hero p{color:rgba(255,255,255,.6);font-size:.85rem;line-height:1.7}
+.custom-form{background:#fff;border-radius:16px;border:1px solid #ede5d0;padding:2rem}
+.upload-zone{border:2px dashed #ddd0b0;border-radius:12px;padding:1.75rem;text-align:center;cursor:pointer;position:relative;transition:border-color .2s,background .2s;background:#FFFCF4}
+.upload-zone:hover{border-color:var(--gold);background:#FFF9EC}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-zone .uz-icon{font-size:2.2rem;margin-bottom:.6rem}
+.upload-zone p{font-size:.8rem;color:#999;line-height:1.6}
+.upload-zone p strong{display:block;color:var(--gold-d);font-size:.85rem;margin-bottom:.2rem}
+.preview-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem}
+.preview-row img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:2px solid #e0c880}
+/* OWNER PANEL */
+.owner-wrap{max-width:700px;margin:0 auto;padding:2.5rem 2rem}
+.owner-panel-card{background:#fff;border-radius:16px;border:1px solid #ede5d0;padding:2rem;margin-bottom:1.5rem}
+.owner-panel-card h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
+.product-img-preview{width:100%;height:180px;border-radius:10px;background:#f9f3e8;margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;border:1.5px dashed #e0c880;cursor:pointer;position:relative}
+.product-img-preview img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.product-img-preview input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.owner-products-list{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem}
+.op-item{display:flex;align-items:center;gap:1rem;background:#fafaf7;border-radius:12px;border:1px solid #ede5d0;padding:.75rem 1rem}
+.op-img{width:52px;height:52px;border-radius:8px;background:#f0e8d8;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;flex-shrink:0}
+.op-img img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.op-info{flex:1}
+.op-name{font-weight:600;font-size:.85rem}
+.op-meta{font-size:.72rem;color:#999;margin-top:.15rem}
+.op-price{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold-d);font-weight:700;white-space:nowrap}
+.op-del{background:none;border:none;color:#ddd;cursor:pointer;font-size:1rem;padding:.25rem;transition:color .18s}
+.op-del:hover{color:var(--red)}
+/* ORDERS TABLE */
+.orders-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.orders-table th{text-align:left;padding:.6rem .75rem;background:#f9f3e8;color:#666;font-weight:500;border-bottom:2px solid #ede5d0}
+.orders-table td{padding:.65rem .75rem;border-bottom:1px solid #f5efe2;vertical-align:top}
+.orders-table tr:hover td{background:#fffcf4}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:8px;font-size:.68rem;font-weight:600}
+.badge-new{background:#FFF3D4;color:var(--gold-d)}
+.badge-called{background:#D4EDDA;color:#155724}
+.badge-done{background:#cce5ff;color:#004085}
+.badge-custom{background:#e2d9f3;color:#5c3d9e}
+.status-select{border:1.5px solid #e8e0d0;border-radius:8px;padding:.25rem .5rem;font-size:.75rem;font-family:'Jost',sans-serif;cursor:pointer;background:#fff}
+/* CONTACT */
+.contact-wrap{max-width:700px;margin:0 auto;padding:2.5rem 2rem}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2rem}
+.contact-card{background:#fff;border-radius:16px;border:1px solid #ede5d0;padding:1.5rem;text-align:center}
+.contact-card .cc-icon{font-size:2rem;margin-bottom:.75rem}
+.contact-card h4{font-weight:600;font-size:.9rem;margin-bottom:.4rem}
+.contact-card p{font-size:.82rem;color:#888;line-height:1.6}
+.contact-card a{color:var(--gold-d);font-weight:500}
+.contact-map{background:#fff;border-radius:16px;border:1px solid #ede5d0;padding:1.5rem;margin-top:1.25rem}
+.contact-map h4{font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem}
+.map-address{background:var(--cream);border-radius:10px;padding:1rem 1.25rem;font-size:.85rem;line-height:1.8;color:var(--deep)}
+.map-address strong{color:var(--gold-d)}
+.wa-big-btn{display:flex;align-items:center;justify-content:center;gap:.75rem;background:#25D366;color:#fff;border:none;padding:1rem 2rem;border-radius:14px;font-size:1rem;font-weight:500;cursor:pointer;font-family:'Jost',sans-serif;width:100%;margin-top:1.25rem;transition:background .2s}
+.wa-big-btn:hover{background:#1da850}
+.hour-row{display:flex;justify-content:space-between;font-size:.8rem;padding:.3rem 0;border-bottom:1px solid #f5efe2;color:#666}
+.hour-row:last-child{border:none}
+/* WHY US */
+.why-section{background:var(--deep);padding:3.5rem 2rem}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem;max-width:900px;margin:0 auto}
+.why-card{text-align:center;padding:1.75rem 1rem}
+.why-card .wi{font-size:2rem;margin-bottom:.75rem}
+.why-card h4{color:#fff;font-weight:600;font-size:.9rem;margin-bottom:.4rem}
+.why-card p{color:rgba(255,255,255,.45);font-size:.78rem;line-height:1.6}
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--deep);color:#fff;padding:.9rem 1.4rem;border-radius:12px;font-size:.82rem;z-index:9999;border-left:4px solid var(--gold);pointer-events:none;opacity:0;transform:translateY(10px);transition:all .3s}
+.toast.show{opacity:1;transform:translateY(0)}
+/* SUCCESS */
+.success-wrap{text-align:center;padding:4rem 2rem;max-width:500px;margin:0 auto}
+.success-wrap .big-check{font-size:5rem;margin-bottom:1rem}
+.success-wrap h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;margin-bottom:.75rem}
+.success-wrap p{color:#888;font-size:.9rem;line-height:1.7;margin-bottom:2rem}
+.success-wrap .detail-box{background:#fff;border-radius:14px;border:1px solid #ede5d0;padding:1.25rem;text-align:left;margin-bottom:1.5rem}
+.detail-box .dr{display:flex;justify-content:space-between;font-size:.82rem;padding:.3rem 0;border-bottom:1px solid #f5efe2;color:#666}
+.detail-box .dr:last-child{border:none;font-weight:600;color:var(--deep)}
+/* PIN */
+.pin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center}
+.pin-overlay.show{display:flex}
+.pin-box{background:#fff;border-radius:20px;padding:2.5rem;width:340px;text-align:center}
+.pin-box h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;margin-bottom:.5rem}
+.pin-box p{font-size:.82rem;color:#999;margin-bottom:1.5rem}
+.pin-inputs{display:flex;gap:.65rem;justify-content:center;margin-bottom:1.5rem}
+.pin-inputs input{width:52px;height:58px;border:2px solid #e8e0d0;border-radius:12px;text-align:center;font-size:1.4rem;font-weight:700;font-family:'Jost',sans-serif;outline:none;transition:border-color .18s}
+.pin-inputs input:focus{border-color:var(--gold)}
+.pin-btn{width:100%;background:var(--gold);color:#fff;border:none;padding:.85rem;border-radius:12px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif}
+/* FIXED WA */
+.fixed-wa{position:fixed;bottom:1.5rem;left:1.5rem;background:#25D366;color:#fff;border:none;padding:.65rem 1.15rem;border-radius:30px;font-size:.8rem;cursor:pointer;font-family:'Jost',sans-serif;font-weight:500;display:flex;align-items:center;gap:.5rem;z-index:100;box-shadow:0 4px 14px rgba(37,211,102,.4)}
+@media(max-width:640px){
+  .hero h1{font-size:2.2rem}
+  nav .nav-links{display:none}
+  .contact-grid{grid-template-columns:1fr}
+  .form-row-2{grid-template-columns:1fr}
+  .cart-wrap,.custom-wrap,.owner-wrap,.contact-wrap{padding:1.5rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-text">Sri Balaji Jewellers<small>PODANUR · COIMBATORE</small></div>
+  </div>
+  <div class="nav-links">
+    <button onclick="showPage('home')" id="nb-home" class="active">Home</button>
+    <button onclick="showPage('shop')" id="nb-shop">Shop</button>
+    <button onclick="showPage('custom')" id="nb-custom">Custom Order</button>
+    <button onclick="showPage('contact')" id="nb-contact">Contact</button>
+
+  </div>
+  <button class="nav-cart" onclick="showPage('cart')" title="Cart">
+    🛒
+    <span class="cart-badge" id="cartBadge">0</span>
+  </button>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">✦ Podanur, Coimbatore</div>
+      <h1>Crafted in <em>Gold</em><br>& <em>Silver</em></h1>
+      <p>Handcrafted jewellery for every occasion — from daily wear to bridal collections. BIS hallmarked, pure quality, straight from our workshop to you.</p>
+      <div class="hero-actions">
+        <button class="btn-gold" onclick="showPage('shop')">Browse Collection</button>
+        <button class="btn-ghost" onclick="showPage('custom')">Custom Design</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hstat-num">500+</div><div class="hstat-label">Designs</div></div>
+        <div><div class="hstat-num">100%</div><div class="hstat-label">Pure</div></div>
+        <div><div class="hstat-num">BIS</div><div class="hstat-label">Hallmarked</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="why-section">
+    <div class="sec-head" style="margin-bottom:2rem">
+      <div class="sec-tag" style="color:var(--gold-l)">✦ Why Choose Us</div>
+      <h2 class="sec-title" style="color:#fff">Our <span>Promise</span></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="wi">🏅</div><h4>BIS Hallmarked</h4><p>Every gold piece certified for guaranteed purity. No compromise.</p></div>
+      <div class="why-card"><div class="wi">🔄</div><h4>Easy Exchange</h4><p>Exchange within 7 days. No questions asked.</p></div>
+      <div class="why-card"><div class="wi">🎨</div><h4>Custom Designs</h4><p>Your design, our craftsmanship. Share a photo and we'll make it.</p></div>
+      <div class="why-card"><div class="wi">📞</div><h4>Direct Owner Service</h4><p>Owner Balaji D personally handles every order.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div class="page" id="page-shop">
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-tag">✦ Our Collection</div>
+      <h2 class="sec-title">Best <span>Sellers</span></h2>
+    </div>
+    <div class="cat-pills">
+      <button class="cat-pill active" onclick="filterCat(this,'all')">All</button>
+      <button class="cat-pill" onclick="filterCat(this,'gold')">🥇 Gold</button>
+      <button class="cat-pill" onclick="filterCat(this,'silver')">🥈 Silver</button>
+      <button class="cat-pill" onclick="filterCat(this,'necklace')">Necklace</button>
+      <button class="cat-pill" onclick="filterCat(this,'ring')">Ring</button>
+      <button class="cat-pill" onclick="filterCat(this,'earring')">Earrings</button>
+      <button class="cat-pill" onclick="filterCat(this,'bangle')">Bangles</button>
+      <button class="cat-pill" onclick="filterCat(this,'chain')">Chain</button>
+    </div>
+    <div class="products-grid" id="productsGrid">
+      <div class="empty-state" style="grid-column:1/-1"><div class="big">⏳</div><p>Loading products...</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="page" id="page-cart">
+  <div class="cart-wrap">
+    <div class="cart-title">🛒 Your Cart</div>
+    <div id="cartContent"></div>
+  </div>
+</div>
+
+<!-- CUSTOM ORDER -->
+<div class="page" id="page-custom">
+  <div class="custom-wrap">
+    <div class="custom-hero">
+      <h2>Custom <span>Design</span> Order</h2>
+      <p>Have a design in mind? Share your photo or describe it — our craftsmen will bring it to life in gold or silver.</p>
+    </div>
+    <div class="custom-form">
+      <div class="form-row-2">
+        <div class="fg"><label>Your Name *</label><input type="text" id="cust-name" placeholder="Full name"></div>
+        <div class="fg"><label>Phone Number *</label><input type="tel" id="cust-phone" placeholder="10-digit mobile"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="fg">
+          <label>Metal Type *</label>
+          <select id="cust-metal">
+            <option value="">Select...</option>
+            <option>Gold (22K)</option>
+            <option>Gold (18K)</option>
+            <option>Silver (925)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Jewellery Type *</label>
+          <select id="cust-type">
+            <option value="">Select...</option>
+            <option>Necklace</option><option>Ring</option><option>Earrings</option>
+            <option>Bangles</option><option>Chain</option><option>Anklet</option>
+            <option>Nose Pin</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Upload Design Photo (optional)</label>
+        <div class="upload-zone">
+          <input type="file" id="custPhoto" accept="image/*" multiple onchange="previewCustPhotos(event)">
+          <div class="uz-icon">📸</div>
+          <p><strong>Tap to upload your design reference</strong>Up to 4 photos</p>
+          <div class="preview-row" id="custPreviewRow"></div>
+        </div>
+      </div>
+      <div class="fg"><label>Your Requirements / Message *</label><textarea id="cust-msg" placeholder="Describe your design — size, weight, occasion, specific details..."></textarea></div>
+      <button class="place-order-btn" onclick="submitCustomOrder()">✦ Send Custom Order Request</button>
+      <button class="wa-order-btn" onclick="waCustomOrder()">💬 WhatsApp Your Design Instead</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="page" id="page-contact">
+  <div class="contact-wrap">
+    <div class="sec-head" style="text-align:left;margin-bottom:1.5rem">
+      <div class="sec-tag">✦ Find Us</div>
+      <h2 class="sec-title">Contact <span>Us</span></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="cc-icon">📞</div>
+        <h4>Call Us</h4>
+        <p><a href="tel:+919894600661">+91 98946 00661</a><br><a href="tel:+918610392148">+91 86103 92148</a></p>
+      </div>
+      <div class="contact-card">
+        <div class="cc-icon">👤</div>
+        <h4>Owner</h4>
+        <p><strong>Balaji D</strong><br>Available Mon–Sat<br>9:00 AM – 8:00 PM</p>
+      </div>
+    </div>
+    <div class="contact-map">
+      <h4>📍 Our Shop</h4>
+      <div class="map-address">
+        <strong>Sri Balaji Jewellers</strong><br>
+        148/1 Main Road, Near PVG Mahal,<br>
+        Podanur, Coimbatore – 641023<br>
+        Tamil Nadu, India
+      </div>
+      <div style="margin-top:1rem">
+        <div class="hour-row"><span>Mon – Sat</span><span style="color:var(--gold-d);font-weight:500">9 AM – 8 PM</span></div>
+        <div class="hour-row"><span>Sunday</span><span style="color:#aaa">Closed</span></div>
+      </div>
+      <button class="wa-big-btn" onclick="openWhatsApp()">💬 Chat on WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="page" id="page-success">
+  <div class="success-wrap">
+    <div class="big-check">✅</div>
+    <h2>Order Confirmed!</h2>
+    <p>Thank you! Owner <strong>Balaji D</strong> will call you within <strong>30 minutes</strong> to confirm your order.</p>
+    <div class="detail-box" id="orderSummaryBox"></div>
+    <button class="btn-gold" style="width:100%;padding:1rem;border-radius:12px;font-size:.95rem;font-weight:600" onclick="showPage('shop')">Continue Shopping</button>
+    <button class="wa-order-btn" onclick="openWhatsApp()" style="width:100%;padding:.85rem;border-radius:12px;margin-top:.65rem">💬 Also WhatsApp Us</button>
+  </div>
+</div>
+
+<!-- FIXED WA -->
+<button class="fixed-wa" onclick="openWhatsApp()">💬 WhatsApp</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───
+let cart = [];
+let allProducts = [];
+let currentFilter = 'all';
+
+// ─── INIT ───
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadProducts();
+});
+
+// ─── API HELPERS ───
+async function api(url, method='GET', body=null) {
+  const opts = { method, headers: {'Content-Type':'application/json'} };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  return res.json();
+}
+
+// ─── PRODUCTS ───
+async function loadProducts(filter='all') {
+  currentFilter = filter;
+  let url = '/api/products';
+  if (filter !== 'all') {
+    if (['gold','silver'].includes(filter)) url += '?metal=' + filter;
+    else url += '?type=' + filter;
+  }
+  const products = await api(url);
+  allProducts = products;
+  renderProducts(products);
+}
+
+function renderProducts(products) {
+  const grid = document.getElementById('productsGrid');
+  if (!products || products.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="big">💎</div><p>No products in this category yet.<br>Check back soon!</p></div>`;
+    return;
+  }
+  grid.innerHTML = products.map(p => `
+    <div class="product-card" onclick="addToCart(${p.id})">
+      <div class="pc-img" style="background:${p.metal==='gold'?'#FFF8E8':'#F0F0F8'}">
+        ${p.has_image ? `<img src="/api/products/${p.id}/image" alt="${p.name}">` : `<span class="pc-emoji">${p.emoji||'💎'}</span>`}
+        <span class="pc-badge ${p.metal}">${p.metal==='gold'?'Gold':'Silver'}</span>
+      </div>
+      <div class="pc-body">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-type">${p.type}</div>
+        <div class="pc-foot">
+          <div class="pc-price">₹${p.price}</div>
+          <button class="pc-add" onclick="event.stopPropagation();addToCart(${p.id})" title="Add to Cart">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCat(el, val) {
+  document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadProducts(val);
+}
+
+function addToCart(pid) {
+  const prod = allProducts.find(p => p.id === pid);
+  if (!prod) return;
+  const existing = cart.find(c => c.id === pid);
+  if (existing) existing.qty++;
+  else cart.push({...prod, qty:1});
+  updateCartBadge();
+  showToast('✦ Added to cart: ' + prod.name);
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((s,c) => s + c.qty, 0);
+  document.getElementById('cartBadge').textContent = total;
+}
+
+// ─── CART ───
+function renderCart() {
+  const wrap = document.getElementById('cartContent');
+  if (cart.length === 0) {
+    wrap.innerHTML = `<div class="empty-state"><div class="big">🛒</div><p>Your cart is empty.<br>Browse our collection and add items!</p><br><button class="btn-gold" style="padding:.7rem 2rem;border-radius:30px" onclick="showPage('shop')">Browse Shop</button></div>`;
+    return;
+  }
+  const subtotal = cart.reduce((s,c) => s + parseInt(c.price.replace(/,/g,''))*c.qty, 0);
+  const itemsHtml = cart.map(c => `
+    <div class="cart-item">
+      <div class="ci-img">
+        ${c.has_image ? `<img src="/api/products/${c.id}/image" alt="${c.name}">` : (c.emoji||'💎')}
+      </div>
+      <div class="ci-info">
+        <div class="ci-name">${c.name}</div>
+        <div class="ci-price">₹${c.price} × ${c.qty}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <button onclick="changeQty(${c.id},-1)" style="background:#f5efe2;border:none;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center">−</button>
+        <span style="font-size:.88rem;font-weight:600;min-width:18px;text-align:center">${c.qty}</span>
+        <button onclick="changeQty(${c.id},1)" style="background:#f5efe2;border:none;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center">+</button>
+        <button class="ci-remove" onclick="removeFromCart(${c.id})">✕</button>
+      </div>
+    </div>
+  `).join('');
+  wrap.innerHTML = `
+    <div class="cart-items">${itemsHtml}</div>
+    <div class="cart-summary">
+      <h3>Order Summary</h3>
+      ${cart.map(c => `<div class="sum-row"><span>${c.name} ×${c.qty}</span><span>₹${(parseInt(c.price.replace(/,/g,''))*c.qty).toLocaleString('en-IN')}</span></div>`).join('')}
+      <div class="sum-row"><span>Total</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>
+    </div>
+    <div class="checkout-form">
+      <h3>Your Details</h3>
+      <div class="form-row-2">
+        <div class="fg"><label>Your Name *</label><input type="text" id="co-name" placeholder="Full name"></div>
+        <div class="fg"><label>Phone Number *</label><input type="tel" id="co-phone" placeholder="10-digit mobile"></div>
+      </div>
+      <div class="fg"><label>Delivery Address (optional)</label><input type="text" id="co-addr" placeholder="Your address for delivery"></div>
+      <div class="fg"><label>Special Note</label><textarea id="co-note" placeholder="Any special requirements..."></textarea></div>
+      <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">✦ Confirm Order — We'll Call You Back</button>
+      <button class="wa-order-btn" onclick="waCartOrder()">💬 Order via WhatsApp Instead</button>
+    </div>`;
+}
+
+function changeQty(pid, delta) {
+  const idx = cart.findIndex(c => c.id === pid);
+  if (idx === -1) return;
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  updateCartBadge();
+  renderCart();
+}
+
+function removeFromCart(pid) {
+  cart = cart.filter(c => c.id !== pid);
+  updateCartBadge();
+  renderCart();
+}
+
+async function placeOrder() {
+  const name = document.getElementById('co-name').value.trim();
+  const phone = document.getElementById('co-phone').value.trim();
+  if (!name || !phone) { showToast('⚠️ Please enter your name and phone number'); return; }
+  if (!/^\d{10}$/.test(phone)) { showToast('⚠️ Enter a valid 10-digit phone number'); return; }
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true; btn.textContent = 'Placing order...';
+
+  const subtotal = cart.reduce((s,c) => s + parseInt(c.price.replace(/,/g,''))*c.qty, 0);
+  const items = cart.map(c => ({name:c.name, qty:c.qty, price:c.price}));
+
+  const res = await api('/api/orders', 'POST', {
+    name, phone,
+    address: document.getElementById('co-addr')?.value.trim() || '',
+    note: document.getElementById('co-note')?.value.trim() || '',
+    items, total: subtotal, order_type: 'cart'
+  });
+
+  document.getElementById('orderSummaryBox').innerHTML = `
+    <div class="dr"><span>Name</span><span>${name}</span></div>
+    <div class="dr"><span>Phone</span><span>${phone}</span></div>
+    <div class="dr"><span>Items</span><span style="text-align:right;max-width:200px">${items.map(i=>i.name+'×'+i.qty).join(', ')}</span></div>
+    <div class="dr"><span>Total</span><span>₹${subtotal.toLocaleString('en-IN')}</span></div>`;
+
+  cart = [];
+  updateCartBadge();
+  showPage('success');
+}
+
+function waCartOrder() {
+  const name = document.getElementById('co-name')?.value.trim() || 'Customer';
+  const items = cart.map(c => `${c.name} ×${c.qty} = ₹${(parseInt(c.price.replace(/,/g,''))*c.qty).toLocaleString('en-IN')}`).join('\n');
+  const msg = `Hello Sri Balaji Jewellers!\n\nName: ${name}\nOrder:\n${items}\n\nPlease confirm availability.`;
+  window.open('https://wa.me/919894600661?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ─── CUSTOM ORDER ───
+function previewCustPhotos(e) {
+  const files = Array.from(e.target.files).slice(0,4);
+  const row = document.getElementById('custPreviewRow');
+  row.innerHTML = '';
+  files.forEach(f => {
+    const r = new FileReader();
+    r.onload = ev => { const img = document.createElement('img'); img.src = ev.target.result; row.appendChild(img); };
+    r.readAsDataURL(f);
+  });
+  if (files.length) showToast('📸 ' + files.length + ' photo(s) ready');
+}
+
+async function submitCustomOrder() {
+  const name = document.getElementById('cust-name').value.trim();
+  const phone = document.getElementById('cust-phone').value.trim();
+  const metal = document.getElementById('cust-metal').value;
+  const type = document.getElementById('cust-type').value;
+  const msg = document.getElementById('cust-msg').value.trim();
+  if (!name || !phone || !metal || !type || !msg) { showToast('⚠️ Please fill all required fields'); return; }
+  if (!/^\d{10}$/.test(phone)) { showToast('⚠️ Enter a valid 10-digit phone number'); return; }
+
+  await api('/api/orders', 'POST', {
+    name, phone, note: msg,
+    items: [{name: `Custom ${type} (${metal})`, qty:1, price:'—'}],
+    total: 0, order_type: 'custom'
+  });
+
+  document.getElementById('orderSummaryBox').innerHTML = `
+    <div class="dr"><span>Name</span><span>${name}</span></div>
+    <div class="dr"><span>Phone</span><span>${phone}</span></div>
+    <div class="dr"><span>Metal</span><span>${metal}</span></div>
+    <div class="dr"><span>Type</span><span>${type}</span></div>
+    <div class="dr"><span>Note</span><span style="text-align:right;max-width:200px">${msg.slice(0,60)}…</span></div>`;
+
+  ['cust-name','cust-phone','cust-msg'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('cust-metal').value='';
+  document.getElementById('cust-type').value='';
+  document.getElementById('custPreviewRow').innerHTML='';
+  showPage('success');
+}
+
+function waCustomOrder() {
+  const name = document.getElementById('cust-name').value.trim() || 'Customer';
+  const type = document.getElementById('cust-type').value || 'custom jewellery';
+  const metal = document.getElementById('cust-metal').value || '';
+  const msg = document.getElementById('cust-msg').value.trim() || '';
+  const text = `Hello Sri Balaji Jewellers!\n\nCustom Order\nName: ${name}\nType: ${type}\nMetal: ${metal}\nDetails: ${msg}\n\nPlease call me back.`;
+  window.open('https://wa.me/919894600661?text=' + encodeURIComponent(text), '_blank');
+}
+
+// ─── PAGE NAV ───
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nb-'+name);
+  if (nb) nb.classList.add('active');
+  if (name === 'shop') loadProducts(currentFilter);
+  if (name === 'cart') renderCart();
+  window.scrollTo(0,0);
+}
+
+// ─── UTILS ───
+function openWhatsApp() {
+  window.open('https://wa.me/919894600661?text=Hello%20Sri%20Balaji%20Jewellers!%20I%20would%20like%20to%20enquire%20about%20jewellery.', '_blank');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Load shop on start
+loadProducts();
+
+// ── REAL-TIME SYNC from Admin Server ──
+// Connects to /events (SSE endpoint on this server).
+// When admin adds/edits/deletes a product, the shop updates instantly.
+(function connectSync() {
+  const es = new EventSource('/events');
+
+  es.addEventListener('connected', () => {
+    console.log('[Balaji] 🔗 Live sync connected');
+    showSyncBadge('🟢 Live', '#27ae60');
+  });
+
+  es.addEventListener('product_added', e => {
+    const prod = JSON.parse(e.data);
+    console.log('[Balaji] ✅ Product added:', prod.name);
+    loadProducts(currentFilter);
+    showToast(`✨ New: ${prod.name} added!`);
+  });
+
+  es.addEventListener('product_updated', e => {
+    const prod = JSON.parse(e.data);
+    console.log('[Balaji] ✏️ Product updated:', prod.name);
+    loadProducts(currentFilter);
+    showToast(`Updated: ${prod.name}`);
+  });
+
+  es.addEventListener('product_deleted', e => {
+    const { id } = JSON.parse(e.data);
+    console.log('[Balaji] 🗑️ Product deleted:', id);
+    loadProducts(currentFilter);
+  });
+
+  es.addEventListener('order_updated', e => {
+    const { id, status } = JSON.parse(e.data);
+    console.log('[Balaji] 📦 Order status:', id, '→', status);
+  });
+
+  es.onerror = () => {
+    showSyncBadge('⚪ Reconnecting…', '#aaa');
+    // Browser auto-reconnects; no manual retry needed
+  };
+})();
+
+function showSyncBadge(text, color) {
+  let badge = document.getElementById('syncStatusBadge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'syncStatusBadge';
+    badge.style.cssText = 'position:fixed;bottom:1rem;left:1rem;background:#1A0A00;color:#fff;' +
+      'font-size:.7rem;padding:.35rem .85rem;border-radius:20px;z-index:9999;' +
+      'font-family:Jost,sans-serif;letter-spacing:.5px;opacity:.85;pointer-events:none;transition:color .3s';
+    document.body.appendChild(badge);
+  }
+  badge.textContent = text;
+  badge.style.borderLeft = `3px solid ${color}`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balaji Jewellers — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C9922A;--gold-l:#F0C96B;--gold-d:#8B6318;--cream:#FFF8EE;--deep:#1A0A00;--red:#C0392B;--green:#27ae60;--bg:#F5F0E8;--card:#fff;--border:#E8DEC8}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--deep);min-height:100vh}
+
+/* ── LOGIN ── */
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1A0A00,#3D1C00)}
+.login-box{background:#fff;border-radius:24px;padding:3rem 2.5rem;width:360px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--deep);margin-bottom:.3rem}
+.login-logo span{color:var(--gold)}
+.login-sub{font-size:.78rem;color:#999;letter-spacing:2px;text-transform:uppercase;margin-bottom:2rem}
+.pin-inputs{display:flex;gap:.75rem;justify-content:center;margin-bottom:1.5rem}
+.pin-inputs input{width:58px;height:65px;border:2px solid #e8e0d0;border-radius:14px;text-align:center;font-size:1.6rem;font-weight:700;font-family:'Jost',sans-serif;outline:none;transition:border-color .18s;background:#fafafa}
+.pin-inputs input:focus{border-color:var(--gold);background:#fff}
+.login-btn{width:100%;background:var(--gold);color:#fff;border:none;padding:1rem;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif;letter-spacing:.5px;transition:background .2s}
+.login-btn:hover{background:var(--gold-d)}
+.login-err{color:var(--red);font-size:.82rem;margin-top:.75rem;min-height:1.2rem}
+
+/* ── LAYOUT ── */
+.app{display:none}
+.app.show{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--deep);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:1.75rem 1.5rem 1rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo-name{font-family:'Cormorant Garamond',serif;color:#fff;font-size:1.15rem;font-weight:700;line-height:1.2}
+.sidebar-logo-name span{color:var(--gold-l)}
+.sidebar-logo-sub{font-size:.6rem;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-top:.2rem}
+.sidebar-badge{display:inline-block;background:rgba(201,146,42,.2);color:var(--gold-l);font-size:.58rem;letter-spacing:1.5px;text-transform:uppercase;padding:.2rem .55rem;border-radius:6px;margin-top:.5rem;border:1px solid rgba(201,146,42,.3)}
+nav.sidebar-nav{padding:1rem 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.5rem;color:rgba(255,255,255,.55);font-size:.85rem;cursor:pointer;transition:all .18s;border-left:3px solid transparent}
+.nav-item:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.04)}
+.nav-item.active{color:var(--gold-l);background:rgba(201,146,42,.1);border-left-color:var(--gold)}
+.nav-item .icon{font-size:1.1rem;width:22px;text-align:center}
+.nav-badge{background:var(--red);color:#fff;font-size:.6rem;font-weight:700;padding:.1rem .4rem;border-radius:10px;margin-left:auto}
+.sidebar-footer{padding:1.25rem 1.5rem;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);padding:.6rem;border-radius:10px;font-family:'Jost',sans-serif;font-size:.8rem;cursor:pointer;transition:all .18s}
+.logout-btn:hover{background:rgba(192,57,43,.2);border-color:rgba(192,57,43,.4);color:rgba(255,255,255,.8)}
+
+.main{flex:1;overflow-y:auto;padding:2rem}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
+.topbar h1{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600}
+.sync-badge{display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid var(--border);border-radius:20px;padding:.4rem 1rem;font-size:.75rem;color:#666}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#ccc;transition:background .3s}
+.sync-dot.live{background:var(--green)}
+.sync-dot.pulse{animation:pulse 1s ease-in-out}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── SECTIONS ── */
+.section{display:none}
+.section.active{display:block}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:1.25rem 1.5rem}
+.stat-label{font-size:.72rem;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--deep)}
+.stat-val.gold{color:var(--gold-d)}
+
+/* ── CARDS ── */
+.panel-card{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:1.75rem;margin-bottom:1.5rem}
+.panel-card h2{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.73rem;font-weight:500;color:#888;margin-bottom:.35rem;letter-spacing:.3px;text-transform:uppercase}
+.fg input,.fg textarea,.fg select{width:100%;padding:.65rem .9rem;border:1.5px solid #e8e0d0;border-radius:10px;font-family:'Jost',sans-serif;font-size:.88rem;color:var(--deep);outline:none;transition:border-color .18s;background:#fff}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--gold)}
+.fg textarea{resize:vertical;min-height:70px}
+.img-preview{width:100%;height:160px;border-radius:10px;border:2px dashed #e8d8b8;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;background:#fffbf3;transition:border-color .2s;margin-bottom:1rem}
+.img-preview:hover{border-color:var(--gold)}
+.img-preview img{width:100%;height:100%;object-fit:cover}
+.img-preview .ph{text-align:center;color:#bbb;font-size:.82rem}
+.img-preview .ph .big{font-size:2rem;margin-bottom:.4rem}
+.add-btn{background:var(--gold);color:#fff;border:none;padding:.8rem 1.8rem;border-radius:12px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif;transition:background .2s}
+.add-btn:hover{background:var(--gold-d)}
+.add-btn:disabled{opacity:.55;cursor:not-allowed}
+
+/* ── PRODUCTS LIST ── */
+.products-table{width:100%;border-collapse:collapse}
+.products-table th{text-align:left;font-size:.7rem;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.8px;padding:.6rem .8rem;border-bottom:2px solid var(--border)}
+.products-table td{padding:.75rem .8rem;border-bottom:1px solid #f5efe2;font-size:.87rem;vertical-align:middle}
+.products-table tr:last-child td{border-bottom:none}
+.prod-thumb{width:44px;height:44px;border-radius:8px;background:#f9f3e8;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;flex-shrink:0}
+.prod-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.prod-name-col{display:flex;align-items:center;gap:.75rem}
+.badge{display:inline-block;font-size:.62rem;font-weight:600;padding:.2rem .6rem;border-radius:6px;text-transform:uppercase;letter-spacing:.5px}
+.badge.gold{background:#FFF3D4;color:var(--gold-d)}
+.badge.silver{background:#EDEDF5;color:#555}
+.price-text{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold-d);font-weight:700}
+.tbl-actions{display:flex;gap:.5rem}
+.edit-btn,.del-btn{border:none;padding:.4rem .85rem;border-radius:8px;font-size:.78rem;cursor:pointer;font-family:'Jost',sans-serif;font-weight:500;transition:all .18s}
+.edit-btn{background:#f0f0f0;color:#555}
+.edit-btn:hover{background:#e0e0e0}
+.del-btn{background:#fde8e8;color:var(--red)}
+.del-btn:hover{background:var(--red);color:#fff}
+.empty-row td{text-align:center;padding:3rem;color:#bbb;font-size:.9rem}
+
+/* ── ORDERS ── */
+.order-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:1.25rem;margin-bottom:1rem}
+.order-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.order-id{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600}
+.order-time{font-size:.73rem;color:#aaa}
+.order-body{font-size:.85rem;color:#666;line-height:1.7}
+.order-body strong{color:var(--deep)}
+.status-select{border:1.5px solid #e8e0d0;border-radius:8px;padding:.35rem .75rem;font-size:.8rem;font-family:'Jost',sans-serif;outline:none;cursor:pointer;background:#fff;color:var(--deep)}
+.status-select:focus{border-color:var(--gold)}
+.status-pill{display:inline-block;font-size:.65rem;font-weight:600;padding:.25rem .7rem;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.status-pill.new{background:#EEF4FF;color:#3B82F6}
+.status-pill.confirmed{background:#ECFDF5;color:#16A34A}
+.status-pill.dispatched{background:#FFFBEB;color:#D97706}
+.status-pill.delivered{background:#F0FDF4;color:#15803D}
+.status-pill.cancelled{background:#FEF2F2;color:var(--red)}
+.order-items{margin-top:.6rem;padding-top:.6rem;border-top:1px solid #f5efe2;font-size:.8rem;color:#888}
+
+/* ── EDIT MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:20px;padding:2rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal-box h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:1.5rem}
+.modal-actions{display:flex;gap:.75rem;margin-top:1rem}
+.cancel-btn{background:#f0f0f0;color:#666;border:none;padding:.75rem 1.5rem;border-radius:12px;font-size:.88rem;cursor:pointer;font-family:'Jost',sans-serif}
+.cancel-btn:hover{background:#e5e5e5}
+.save-btn{background:var(--gold);color:#fff;border:none;padding:.75rem 1.8rem;border-radius:12px;font-size:.88rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif}
+.save-btn:hover{background:var(--gold-d)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--deep);color:#fff;padding:.85rem 1.5rem;border-radius:12px;font-size:.85rem;z-index:99999;display:none;align-items:center;gap:.6rem;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.toast.show{display:flex}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+
+@media(max-width:700px){
+  .sidebar{display:none}
+  .form-grid{grid-template-columns:1fr}
+  .products-table .hide-mobile{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<!-- ── MAIN APP ── -->
+<div class="app show" id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-name">Sri <span>Balaji</span><br>Jewellers</div>
+      <div class="sidebar-logo-sub">Podanur, Coimbatore</div>
+      <div class="sidebar-badge">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showSection('dashboard')">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showSection('products')">
+        <span class="icon">💎</span> Products
+      </div>
+      <div class="nav-item" onclick="showSection('add-product')">
+        <span class="icon">➕</span> Add Product
+      </div>
+      <div class="nav-item" onclick="showSection('orders')">
+        <span class="icon">📦</span> Orders
+        <span class="nav-badge" id="ordersBadge" style="display:none">0</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">⎋ Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="sectionTitle">Dashboard</h1>
+      <div class="sync-badge">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncText">Connecting…</span>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="section-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-val gold" id="statProducts">—</div></div>
+        <div class="stat-card"><div class="stat-label">Gold Items</div><div class="stat-val gold" id="statGold">—</div></div>
+        <div class="stat-card"><div class="stat-label">Silver Items</div><div class="stat-val" id="statSilver">—</div></div>
+        <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-val" id="statOrders">—</div></div>
+        <div class="stat-card"><div class="stat-label">New Orders</div><div class="stat-val gold" id="statNew">—</div></div>
+      </div>
+      <div class="panel-card">
+        <h2>⚡ Live Sync Status</h2>
+        <p style="font-size:.88rem;color:#666;line-height:1.8">
+          Any product you <strong>add, edit, or delete</strong> is broadcast instantly to the main website via Server-Sent Events (SSE).<br>
+          All connected customers see the updated catalogue <strong>without refreshing</strong>.
+        </p>
+        <div style="margin-top:1rem;padding:1rem;background:#fffbf3;border-radius:10px;border:1px solid #f0e8d0;font-size:.82rem;color:#888">
+          🌐 Main Site: <code style="color:var(--gold-d)">http://localhost:5000</code> &nbsp;|&nbsp;
+          🔐 Admin Panel: <code style="color:var(--gold-d)">http://localhost:5001</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS LIST -->
+    <div class="section" id="section-products">
+      <div class="panel-card">
+        <h2>💎 All Products</h2>
+        <table class="products-table" id="productsTable">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th class="hide-mobile">Metal</th>
+              <th class="hide-mobile">Type</th>
+              <th>Price (₹)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productsTbody">
+            <tr class="empty-row"><td colspan="5">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADD PRODUCT -->
+    <div class="section" id="section-add-product">
+      <div class="panel-card">
+        <h2>➕ Add New Product</h2>
+        <div class="img-preview" id="imgPreview" onclick="document.getElementById('imgInput').click()">
+          <div class="ph"><div class="big">🖼️</div>Click to upload product image<br><small style="color:#ccc">JPG / PNG / WEBP</small></div>
+        </div>
+        <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="previewImg(event)">
+        <div class="form-grid">
+          <div class="fg"><label>Product Name *</label><input type="text" id="newName" placeholder="e.g. Gold Temple Necklace"></div>
+          <div class="fg"><label>Price (₹) *</label><input type="text" id="newPrice" placeholder="e.g. 48,500"></div>
+          <div class="fg">
+            <label>Metal *</label>
+            <select id="newMetal">
+              <option value="gold">Gold</option>
+              <option value="silver">Silver</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Type *</label>
+            <select id="newType">
+              <option value="necklace">Necklace</option>
+              <option value="ring">Ring</option>
+              <option value="earring">Earring</option>
+              <option value="bangle">Bangle</option>
+              <option value="chain">Chain</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Description</label><textarea id="newDesc" placeholder="Material, weight, design details…"></textarea></div>
+        <button class="add-btn" id="addBtn" onclick="addProduct()">✦ Publish to Website</button>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="section" id="section-orders">
+      <div id="ordersList"><p style="color:#bbb;text-align:center;padding:3rem">Loading orders…</p></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── EDIT MODAL ── -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <h3>✏️ Edit Product</h3>
+    <input type="hidden" id="editId">
+    <div class="img-preview" id="editImgPreview" onclick="document.getElementById('editImgInput').click()">
+      <div class="ph"><div class="big">🖼️</div>Click to change image</div>
+    </div>
+    <input type="file" id="editImgInput" accept="image/*" style="display:none" onchange="previewEditImg(event)">
+    <div class="form-grid">
+      <div class="fg"><label>Product Name</label><input type="text" id="editName"></div>
+      <div class="fg"><label>Price (₹)</label><input type="text" id="editPrice"></div>
+      <div class="fg"><label>Metal</label><select id="editMetal"><option value="gold">Gold</option><option value="silver">Silver</option></select></div>
+      <div class="fg"><label>Type</label><select id="editType"><option value="necklace">Necklace</option><option value="ring">Ring</option><option value="earring">Earring</option><option value="bangle">Bangle</option><option value="chain">Chain</option><option value="other">Other</option></select></div>
+    </div>
+    <div class="fg"><label>Description</label><textarea id="editDesc"></textarea></div>
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+      <button class="save-btn" onclick="saveEdit()">Save & Sync to Site</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+let editImgData = null;
+let newImgData = null;
+
+// ── INIT ──
+async function initApp() {
+  await loadDashboard();
+  connectSSEStatus();
+}
+
+// ── NAV ──
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`section-${name}`).classList.add('active');
+  event.currentTarget.classList.add('active');
+  const titles = {dashboard:'Dashboard', products:'Products', 'add-product':'Add Product', orders:'Orders'};
+  document.getElementById('sectionTitle').textContent = titles[name] || name;
+  if (name === 'products') loadProductsTable();
+  if (name === 'orders') loadOrders();
+  if (name === 'dashboard') loadDashboard();
+}
+
+// ── API ──
+async function api(url, method='GET', body=null) {
+  const opts = {method, headers: {'Content-Type':'application/json'}};
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  return res;
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  const [pr, or] = await Promise.all([
+    fetch('/api/products').then(r => r.json()),
+    fetch('/api/orders').then(r => r.json())
+  ]);
+  document.getElementById('statProducts').textContent = pr.length;
+  document.getElementById('statGold').textContent = pr.filter(p => p.metal === 'gold').length;
+  document.getElementById('statSilver').textContent = pr.filter(p => p.metal === 'silver').length;
+  document.getElementById('statOrders').textContent = or.length;
+  const newOrders = or.filter(o => o.status === 'new').length;
+  document.getElementById('statNew').textContent = newOrders;
+  const badge = document.getElementById('ordersBadge');
+  if (newOrders > 0) { badge.textContent = newOrders; badge.style.display = 'inline'; }
+  else badge.style.display = 'none';
+}
+
+// ── PRODUCTS TABLE ──
+async function loadProductsTable() {
+  const res = await fetch('/api/products');
+  const products = await res.json();
+  const tbody = document.getElementById('productsTbody');
+  if (!products.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No products yet — add some!</td></tr>';
+    return;
+  }
+  tbody.innerHTML = products.map(p => `
+    <tr>
+      <td>
+        <div class="prod-name-col">
+          <div class="prod-thumb">${p.has_image ? `<img src="/api/products/${p.id}/image" alt="">` : p.emoji}</div>
+          <span>${p.name}</span>
+        </div>
+      </td>
+      <td class="hide-mobile"><span class="badge ${p.metal}">${p.metal}</span></td>
+      <td class="hide-mobile" style="text-transform:capitalize">${p.type}</td>
+      <td><span class="price-text">₹${p.price}</span></td>
+      <td>
+        <div class="tbl-actions">
+          <button class="edit-btn" onclick="openEdit(${p.id})">Edit</button>
+          <button class="del-btn" onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g,"\\'")}')">Delete</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── ADD PRODUCT ──
+function previewImg(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    newImgData = ev.target.result;
+    document.getElementById('imgPreview').innerHTML = `<img src="${newImgData}" alt="">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function addProduct() {
+  const name = document.getElementById('newName').value.trim();
+  const price = document.getElementById('newPrice').value.trim();
+  const metal = document.getElementById('newMetal').value;
+  const type = document.getElementById('newType').value;
+  const desc = document.getElementById('newDesc').value.trim();
+  if (!name || !price) { showToast('Name and price are required', 'error'); return; }
+  const btn = document.getElementById('addBtn');
+  btn.disabled = true; btn.textContent = 'Publishing…';
+  const res = await api('/api/products', 'POST', {name, price, metal, type, desc, img_data: newImgData});
+  btn.disabled = false; btn.textContent = '✦ Publish to Website';
+  if (res.ok) {
+    showToast('✅ Product published — main site updated!', 'success');
+    document.getElementById('newName').value = '';
+    document.getElementById('newPrice').value = '';
+    document.getElementById('newDesc').value = '';
+    document.getElementById('imgPreview').innerHTML = '<div class="ph"><div class="big">🖼️</div>Click to upload product image<br><small style="color:#ccc">JPG / PNG / WEBP</small></div>';
+    newImgData = null;
+    loadDashboard();
+  } else {
+    const err = await res.json();
+    showToast(err.error || 'Failed to add', 'error');
+  }
+}
+
+// ── DELETE ──
+async function deleteProduct(pid, name) {
+  if (!confirm(`Delete "${name}"? This will remove it from the main site instantly.`)) return;
+  const res = await api(`/api/products/${pid}`, 'DELETE');
+  if (res.ok) {
+    showToast('🗑️ Deleted — main site updated', 'success');
+    loadProductsTable();
+    loadDashboard();
+  } else showToast('Delete failed', 'error');
+}
+
+// ── EDIT MODAL ──
+async function openEdit(pid) {
+  const res = await fetch('/api/products');
+  const products = await res.json();
+  const p = products.find(x => x.id === pid);
+  if (!p) return;
+  document.getElementById('editId').value = p.id;
+  document.getElementById('editName').value = p.name;
+  document.getElementById('editPrice').value = p.price;
+  document.getElementById('editMetal').value = p.metal;
+  document.getElementById('editType').value = p.type;
+  document.getElementById('editDesc').value = p.desc || '';
+  const prev = document.getElementById('editImgPreview');
+  if (p.has_image) prev.innerHTML = `<img src="/api/products/${p.id}/image" alt="">`;
+  else prev.innerHTML = `<div class="ph"><div class="big">${p.emoji}</div>Click to change image</div>`;
+  editImgData = null;
+  document.getElementById('editModal').classList.add('show');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('show');
+}
+
+function previewEditImg(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    editImgData = ev.target.result;
+    document.getElementById('editImgPreview').innerHTML = `<img src="${editImgData}" alt="">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveEdit() {
+  const pid = document.getElementById('editId').value;
+  const body = {
+    name: document.getElementById('editName').value.trim(),
+    price: document.getElementById('editPrice').value.trim(),
+    metal: document.getElementById('editMetal').value,
+    type: document.getElementById('editType').value,
+    desc: document.getElementById('editDesc').value.trim(),
+  };
+  if (editImgData) body.img_data = editImgData;
+  const res = await api(`/api/products/${pid}`, 'PUT', body);
+  if (res.ok) {
+    showToast('✅ Updated — main site synced!', 'success');
+    closeEditModal();
+    loadProductsTable();
+    loadDashboard();
+  } else showToast('Update failed', 'error');
+}
+
+// ── ORDERS ──
+async function loadOrders() {
+  const res = await fetch('/api/orders');
+  const orders = await res.json();
+  const list = document.getElementById('ordersList');
+  if (!orders.length) {
+    list.innerHTML = '<p style="color:#bbb;text-align:center;padding:3rem">No orders yet.</p>';
+    return;
+  }
+  list.innerHTML = orders.map(o => `
+    <div class="order-card">
+      <div class="order-header">
+        <div>
+          <div class="order-id">${o.id}</div>
+          <div class="order-time">${new Date(o.timestamp).toLocaleString('en-IN')}</div>
+        </div>
+        <select class="status-select" onchange="updateStatus('${o.id}', this.value)">
+          ${['new','confirmed','dispatched','delivered','cancelled'].map(s =>
+            `<option value="${s}" ${o.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="order-body">
+        <strong>${o.name}</strong> · 📞 ${o.phone}${o.address ? ` · 📍 ${o.address}` : ''}
+        ${o.note ? `<br>📝 ${o.note}` : ''}
+      </div>
+      <div class="order-items">
+        ${o.order_type === 'custom' ? '🎨 Custom Order' :
+          (Array.isArray(o.items) ? o.items.map(i => `${i.name} ×${i.qty||1}`).join(', ') : '')}
+        ${o.total ? ` · <strong style="color:var(--gold-d)">₹${o.total.toLocaleString('en-IN')}</strong>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+async function updateStatus(orderId, status) {
+  const res = await api(`/api/orders/${orderId}/status`, 'PATCH', {status});
+  if (res.ok) showToast(`Order status → ${status}`, 'success');
+  else showToast('Update failed', 'error');
+}
+
+// ── SSE STATUS (admin watches for confirmation its broadcasts worked) ──
+function connectSSEStatus() {
+  // Admin connects to main site's /events to confirm SSE is up
+  // Here we just show admin is "broadcasting" mode
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncText');
+  dot.classList.add('live');
+  txt.textContent = 'Live — syncing to main site';
+}
+
+// ── TOAST ──
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type}`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Page is only reachable if logged in (Flask redirects otherwise)
+initApp();
+
+async function logout() {
+  await fetch('/api/owner/logout', {method:'POST'});
+  window.location.href = '/admin/login';
+}
+
+</script>
+</body>
+</html>

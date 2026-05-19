@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — Sri Balaji Jewellers</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Jost',sans-serif;background:linear-gradient(135deg,#1A0A00,#3D1C00);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.box{background:#fff;border-radius:24px;padding:3rem 2.5rem;width:360px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:#1A0A00;margin-bottom:.3rem}
+.logo span{color:#C9922A}
+.sub{font-size:.72rem;color:#aaa;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:2.5rem}
+.pin-row{display:flex;gap:.75rem;justify-content:center;margin-bottom:1.5rem}
+.pin-row input{width:58px;height:65px;border:2px solid #e8e0d0;border-radius:14px;text-align:center;font-size:1.6rem;font-weight:700;outline:none;transition:border-color .18s;background:#fafafa;font-family:'Jost',sans-serif}
+.pin-row input:focus{border-color:#C9922A;background:#fff}
+.btn{width:100%;background:#C9922A;color:#fff;border:none;padding:1rem;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;font-family:'Jost',sans-serif;transition:background .2s}
+.btn:hover{background:#8B6318}
+.err{color:#C0392B;font-size:.82rem;margin-top:.85rem;min-height:1.2rem}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">Sri <span>Balaji</span> Jewellers</div>
+  <div class="sub">Admin Panel</div>
+  <div class="pin-row">
+    <input type="password" maxlength="1" id="p0" oninput="next(0)" onkeydown="back(event,0)">
+    <input type="password" maxlength="1" id="p1" oninput="next(1)" onkeydown="back(event,1)">
+    <input type="password" maxlength="1" id="p2" oninput="next(2)" onkeydown="back(event,2)">
+    <input type="password" maxlength="1" id="p3" oninput="tryLogin()" onkeydown="back(event,3)">
+  </div>
+  <button class="btn" onclick="tryLogin()">Enter Admin Panel</button>
+  <div class="err" id="err"></div>
+</div>
+<script>
+function next(i) {
+  if (document.getElementById('p'+i).value && i < 3)
+    document.getElementById('p'+(i+1)).focus();
+}
+function back(e, i) {
+  if (e.key === 'Backspace' && !document.getElementById('p'+i).value && i > 0)
+    document.getElementById('p'+(i-1)).focus();
+  if (e.key === 'Enter') tryLogin();
+}
+async function tryLogin() {
+  const pin = [0,1,2,3].map(i => document.getElementById('p'+i).value).join('');
+  if (pin.length < 4) return;
+  const res = await fetch('/api/owner/login', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({pin})
+  });
+  if (res.ok) {
+    window.location.href = '/admin';
+  } else {
+    document.getElementById('err').textContent = '✗ Wrong PIN — try again';
+    [0,1,2,3].forEach(i => document.getElementById('p'+i).value = '');
+    document.getElementById('p0').focus();
+  }
+}
+setTimeout(() => document.getElementById('p0').focus(), 100);
+</script>
+</body>
+</html>

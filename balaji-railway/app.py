@@ -24,9 +24,6 @@ OWNER_PIN    = os.environ.get('OWNER_PIN', '1234')
 DATABASE_URL = os.environ.get('DATABASE_URL')          # set by Railway Postgres plugin
 REDIS_URL    = os.environ.get('REDIS_URL')             # set by Railway Redis plugin
 
-# ─── IMAGE STORAGE ───
-# On Railway, local filesystem is ephemeral so we store images as base64 in DB.
-
 # ─── SSE BUS ───
 _listeners: list[queue.Queue] = []
 _lock = threading.Lock()
@@ -129,7 +126,8 @@ def init_db():
                     items TEXT,
                     total INTEGER,
                     status TEXT DEFAULT 'new',
-                    order_type TEXT DEFAULT 'cart'
+                    order_type TEXT DEFAULT 'cart',
+                    img_data TEXT -- 👈 EQUIPPED TO STORE CUSTOM UPLOADS SAFELY
                 );
             ''')
             cur.execute('SELECT COUNT(*) FROM products')
@@ -154,7 +152,7 @@ def init_db():
 
 try:
     init_db()
-    print("✅ Database initialised")
+    print("✅ Database initialised with Order img_data space.")
 except Exception as e:
     print(f"⚠️  DB init error: {e}")
 
@@ -321,19 +319,22 @@ def place_order():
     
     items_raw = data.get('items', [])
     
-    # 🎯 FIX: Bundle custom uploaded image directly into items dict if custom structure is sent
-    if order_type == 'custom' and data.get('custom_image'):
-        items_raw = {'custom_image': data.get('custom_image')}
+    # Extract image whether it arrives as custom_image or img_data parameters
+    custom_img = data.get('custom_image') or data.get('img_data')
+
+    if order_type == 'custom' and custom_img:
+        # Keep copy inside items object fallback structure
+        items_raw = {'custom_image': custom_img}
 
     items_json = json.dumps(items_raw) if isinstance(items_raw, (list, dict)) else str(items_raw)
 
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                'INSERT INTO orders (id,timestamp,name,phone,address,note,items,total,status,order_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+                'INSERT INTO orders (id,timestamp,name,phone,address,note,items,total,status,order_type,img_data) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                 (order_id, datetime.now().isoformat(), data.get('name'), data.get('phone'),
                  data.get('address',''), data.get('note',''),
-                 items_json, data.get('total',0), 'new', order_type)
+                 items_json, data.get('total',0), 'new', order_type, custom_img)
             )
         conn.commit()
 
@@ -347,7 +348,8 @@ def place_order():
         'items': items_raw,
         'total': data.get('total',0),
         'status': 'new',
-        'order_type': order_type
+        'order_type': order_type,
+        'img_data': custom_img
     }
     broadcast('order_placed', order_payload)
     return jsonify({'ok': True, 'id': order_id})
@@ -407,14 +409,14 @@ def owner_status():
 def sse_stream():
     q = subscribe()
     def stream():
-        yield "event: connected\\ndata: {}\\n\\n"
+        yield "event: connected\ndata: {}\n\n"
         try:
             while True:
                 try:
                     msg = q.get(timeout=25)
                     yield msg
                 except Exception:
-                    yield ": heartbeat\\n\\n"
+                    yield ": heartbeat\n\n"
         finally:
             unsubscribe(q)
     return Response(stream(), mimetype='text/event-stream',
